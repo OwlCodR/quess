@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="subtitle" type="String"/>
+        <variable name="handler" type="com.votenote.net.ui.auth.login.LoginFragment" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/proxima_nova_bold"
+                android:text="@string/vote"
+                android:textColor="@color/orange"
+                android:textSize="60sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/proxima_nova_bold"
+                android:text="@string/note"
+                android:textColor="@color/black"
+                android:textSize="60sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewSubtitle"
+            android:layout_width="1dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-5dp"
+            android:fontFamily="@font/proxima_nova_light"
+            android:text="@{subtitle}"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="10dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minWidth="350dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.hbb20.CountryCodePicker
+                        android:id="@+id/countryCodePicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        app:ccp_defaultNameCode="RU"
+                        app:ccp_autoDetectLanguage="true"
+                        app:ccp_hintExampleNumber="true"
+                        android:gravity="center" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayoutLoginPhone"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColorHint="@color/gray"
+                        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
+                        app:errorEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:fontFamily="sans-serif-light"
+                            android:inputType="numberSigned|phone"
+                            android:textColorHint="@color/gray"
+                            android:textSize="18sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutLoginPassword"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:textColorHint="@color/gray"
+                    android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
+                    app:errorEnabled="true"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/gray"
+                    app:startIconDrawable="@drawable/ic_password_24">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="sans-serif-light"
+                        android:hint="@string/hint_password"
+                        android:inputType="textPassword"
+                        android:textSize="18sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/buttonSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="@color/orange"
+            android:fontFamily="@font/proxima_nova_regular"
+            android:minWidth="190dp"
+            android:minHeight="70dp"
+            android:onClick="@{() -> handler.onLogin()}"
+            android:text="@string/sign_in"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:cornerRadius="40dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/proxima_nova_regular"
+                android:text="@string/not_a_member" />
+
+            <TextView
+                android:id="@+id/textViewSignUpNow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:autoLink="none"
+                android:fontFamily="@font/proxima_nova_regular"
+                android:text="@string/sign_up_now" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/proxima_nova_regular"
+                android:text="@string/problems_logging_in" />
+
+            <TextView
+                android:id="@+id/textViewChangePassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:autoLink="none"
+                android:fontFamily="@font/proxima_nova_regular"
+                android:text="@string/change_password" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

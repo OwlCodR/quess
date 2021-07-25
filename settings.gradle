@@ -1,0 +1,2 @@
+rootProject.name = "VoteNote"
+include ':app'
