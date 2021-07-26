@@ -23,7 +23,6 @@ fun log(context: Context?, text:String) {
 
 class MainActivity : AppCompatActivity() {
 
-    val START_PREFERENCE = "START_PREF"
     val LOG_TAG = "VoteNote_Debug"
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -54,32 +53,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        checkFirstStart()
         log(this, "onCreate!")
-    }
-
-    private fun checkFirstStart() {
-        val sharedPreference = getSharedPreferences(START_PREFERENCE, Context.MODE_PRIVATE)
-
-        // sharedPreference.edit().clear().apply()
-
-        val isFirst = sharedPreference.getBoolean("isFirst", true)
-        val loggedIn = false
-
-
-        if (isFirst || !loggedIn) {
-            sharedPreference
-                .edit()
-                .putBoolean("isFirst", false)
-                .apply()
-
-            val intent = Intent(this, AuthActivity::class.java)
-            intent.putExtra("isFirst", isFirst)
-            startActivity(intent)
-
-            log(this, "First start or not logged in")
-        } else
-            log(this, "Not first login or already logged in")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

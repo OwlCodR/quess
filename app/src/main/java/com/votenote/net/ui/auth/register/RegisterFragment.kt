@@ -1,186 +1,103 @@
 package com.votenote.net.ui.auth.register
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.textfield.TextInputLayout
+import com.hbb20.CountryCodePicker
 import com.votenote.net.databinding.FragmentRegisterBinding
+import com.votenote.net.log
+import com.votenote.net.ui.auth.AuthViewModel
 
-/**
- * An example full-screen fragment that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 class RegisterFragment : Fragment() {
-    private val hideHandler = Handler()
 
-    @Suppress("InlinedApi")
-    private val hidePart2Runnable = Runnable {
-        // Delayed removal of status and navigation bar
-
-        // Note that some of these constants are new as of API 16 (Jelly Bean)
-        // and API 19 (KitKat). It is safe to use them, as they are inlined
-        // at compile-time and do nothing on earlier devices.
-        val flags =
-            View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                    View.SYSTEM_UI_FLAG_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        activity?.window?.decorView?.systemUiVisibility = flags
-        (activity as? AppCompatActivity)?.supportActionBar?.hide()
-    }
-    private val showPart2Runnable = Runnable {
-        // Delayed display of UI elements
-        fullscreenContentControls?.visibility = View.VISIBLE
-    }
-    private var visible: Boolean = false
-    private val hideRunnable = Runnable { hide() }
-
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private val delayHideTouchListener = View.OnTouchListener { _, _ ->
-        if (AUTO_HIDE) {
-            delayedHide(AUTO_HIDE_DELAY_MILLIS)
-        }
-        false
+    companion object {
+        fun newInstance() = RegisterFragment()
     }
 
-    private var dummyButton: Button? = null
-    private var fullscreenContent: View? = null
-    private var fullscreenContentControls: View? = null
+    private lateinit var viewModel: AuthViewModel
+    private lateinit var binding: FragmentRegisterBinding
+    private lateinit var inputTag: TextInputLayout
+    private lateinit var inputPhone: TextInputLayout
+    private lateinit var inputPassword: TextInputLayout
+    private lateinit var inputRepeatPassword: TextInputLayout
+    private lateinit var countryCodePicker: CountryCodePicker
 
-    private var _binding: FragmentRegisterBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentRegisterBinding.inflate(inflater, container, false)
 
-        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        inputTag = binding.textInputLayoutRegisterTag
+        inputPhone = binding.textInputLayoutLoginPhone
+        inputPassword = binding.textInputLayoutRegisterPassword
+        inputRepeatPassword = binding.textInputLayoutRegisterRepeatPassword
+
+        binding.handler = this
+
+        log(context, "onCreateView!")
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity()).get(AuthViewModel::class.java)
 
-        visible = true
-
-        dummyButton = binding.dummyButton
-        fullscreenContent = binding.fullscreenContent
-        fullscreenContentControls = binding.fullscreenContentControls
-        // Set up the user interaction to manually show or hide the system UI.
-        fullscreenContent?.setOnClickListener { toggle() }
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        dummyButton?.setOnTouchListener(delayHideTouchListener)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-
-        // Clear the systemUiVisibility flag
-        activity?.window?.decorView?.systemUiVisibility = 0
-        show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        dummyButton = null
-        fullscreenContent = null
-        fullscreenContentControls = null
-    }
-
-    private fun toggle() {
-        if (visible) {
-            hide()
-        } else {
-            show()
+        countryCodePicker = binding.countryCodePicker
+        countryCodePicker.registerCarrierNumberEditText(binding.editTextPhone)
+        countryCodePicker.setPhoneNumberValidityChangeListener {
+            if (countryCodePicker.isValidFullNumber)
+                inputPhone.isErrorEnabled = false
         }
+
+        log(context, "onViewCreated!")
     }
 
-    private fun hide() {
-        // Hide UI first
-        fullscreenContentControls?.visibility = View.GONE
-        visible = false
+    fun onRegister() {
 
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        hideHandler.removeCallbacks(showPart2Runnable)
-        hideHandler.postDelayed(hidePart2Runnable, UI_ANIMATION_DELAY.toLong())
     }
 
-    @Suppress("InlinedApi")
-    private fun show() {
-        // Show the system bar
-        fullscreenContent?.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        visible = true
-
-        // Schedule a runnable to display UI elements after a delay
-        hideHandler.removeCallbacks(hidePart2Runnable)
-        hideHandler.postDelayed(showPart2Runnable, UI_ANIMATION_DELAY.toLong())
-        (activity as? AppCompatActivity)?.supportActionBar?.show()
+    private fun checkTagValid(): Boolean {
+        val tag: String = inputTag.editText?.text.toString()
+        val errorHint: String
+        when {
+            tag.length < 6 -> {
+                errorHint = "Tag is too short"
+            }
+            tag.length > 16 -> {
+                errorHint = "Tag is too long"
+            }
+            Regex(".*/s.*").containsMatchIn(tag) -> {
+                errorHint = "Tag must not contain spaces"
+            }
+            Regex(".*[^/w].*").containsMatchIn(tag) -> {
+                errorHint = "Tag must contain only letters, digits or underscores"
+            }
+            isTagUnique(tag) -> {
+                log(context, "Password is valid and unique")
+                return true
+            }
+            else -> errorHint = "Tag"
+        }
+        inputTag.hint = errorHint
+        log(context, "Tag errorHint = $errorHint")
+        return false
     }
 
-    /**
-     * Schedules a call to hide() in [delayMillis], canceling any
-     * previously scheduled calls.
-     */
-    private fun delayedHide(delayMillis: Int) {
-        hideHandler.removeCallbacks(hideRunnable)
-        hideHandler.postDelayed(hideRunnable, delayMillis.toLong())
+    private fun checkPhone(): Boolean {
+        return countryCodePicker.isValidFullNumber
     }
 
-    companion object {
-        /**
-         * Whether or not the system UI should be auto-hidden after
-         * [AUTO_HIDE_DELAY_MILLIS] milliseconds.
-         */
-        private const val AUTO_HIDE = true
-
-        /**
-         * If [AUTO_HIDE] is set, the number of milliseconds to wait after
-         * user interaction before hiding the system UI.
-         */
-        private const val AUTO_HIDE_DELAY_MILLIS = 3000
-
-        /**
-         * Some older devices needs a small delay between UI widget updates
-         * and a change of the status and navigation bar.
-         */
-        private const val UI_ANIMATION_DELAY = 300
+    private fun isPhoneUnique(phone: String): Boolean {
+        log(context, "isPhoneUnique()")
+        return true
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun isTagUnique(tag: String): Boolean {
+        log(context, "isTagUnique()")
+        return true
     }
 }
