@@ -6,14 +6,18 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
 import com.votenote.net.R
 import com.votenote.net.databinding.FragmentLoginBinding
 import com.votenote.net.log
+import com.votenote.net.ui.auth.AuthActivity
 import com.votenote.net.ui.auth.AuthViewModel
 
 class LoginFragment : Fragment() {
@@ -25,110 +29,89 @@ class LoginFragment : Fragment() {
     private lateinit var viewModel: AuthViewModel
     private lateinit var binding: FragmentLoginBinding
     private lateinit var countryCodePicker: CountryCodePicker
-    private lateinit var textInputLayoutPhone: TextInputLayout
-    private lateinit var textInputLayoutPassword: TextInputLayout
+    private lateinit var inputPhone: TextInputLayout
+    private lateinit var inputPassword: TextInputLayout
+    private lateinit var textViewSignUp: TextView
+
+    private lateinit var authActivity: AuthActivity
+
+    private lateinit var navController: NavController
+    private lateinit var navHostFragment: NavHostFragment
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentLoginBinding.inflate(inflater, container, false)
+        log(context, "onCreateView()")
 
-        textInputLayoutPhone = binding.textInputLayoutLoginPhone
-        textInputLayoutPassword = binding.textInputLayoutLoginPassword
-        countryCodePicker = binding.countryCodePicker
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
         binding.handler = this
 
+        viewModel = ViewModelProvider(requireActivity()).get(AuthViewModel::class.java)
+        inputPhone = binding.textInputLayoutPhone
+        inputPassword = binding.textInputLayoutPassword
+        countryCodePicker = binding.countryCodePicker
+        textViewSignUp = binding.textViewSignUpNow
 
-        log(context, "onCreateView!")
+        navHostFragment =
+            activity?.
+            supportFragmentManager?.
+            findFragmentById(R.id.nav_host_fragment_auth) as NavHostFragment
+        navController = navHostFragment.navController
+
+        authActivity = activity as AuthActivity
+        binding.authActivity = authActivity
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(AuthViewModel::class.java)
+        log(context, "onViewCreated()")
 
-        textInputLayoutPassword.editText?.addTextChangedListener(object : TextWatcher {
+        textViewSignUp.setOnClickListener {
+            navController.navigate(R.id.action_nav_login_to_nav_register)
+        }
+
+        inputPassword.editText?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (checkPasswordValid(textInputLayoutPassword))
-                    log(context, "Password is valid")
+                authActivity.checkPasswordValid(inputPassword)
             }
         })
 
         countryCodePicker.registerCarrierNumberEditText(binding.editTextPhone)
         countryCodePicker.setPhoneNumberValidityChangeListener {
             if (countryCodePicker.isValidFullNumber)
-                textInputLayoutPhone.isErrorEnabled = false
+                inputPhone.isErrorEnabled = false
         }
-
-        setSubtitle()
-
-        log(context, "onViewCreated!")
-    }
-
-    private fun setSubtitle() {
-        val subtitles = resources.getStringArray(R.array.subtitles)
-        val rand = subtitles.indices.random()
-        binding.subtitle = subtitles[rand]
-        log(context, "Subtitle today is '${binding.subtitle}'")
-    }
-
-    fun checkPasswordValid(inputPassword: TextInputLayout): Boolean {
-        val errorHint: String
-        val password: String = inputPassword.editText?.text.toString()
-        when {
-            password.length < 8 -> {
-                errorHint = "Password is too short"
-            }
-            password.length > 128 -> {
-                errorHint = "Password is too long"
-            }
-            Regex(".*[^0-9].*").containsMatchIn(password) -> {
-                errorHint = "Password must contain at least 1 digit"
-            }
-            Regex(".*[^a-zA-Z].*").containsMatchIn(password) -> {
-                errorHint = "Password must contain at least 1 letter"
-            }
-            else -> {
-                inputPassword.isErrorEnabled = false
-                inputPassword.hint = "Password"
-                return true
-            }
-        }
-        inputPassword.hint = errorHint
-        log(context, "Password error_hint = $errorHint")
-        return false
     }
 
     fun onLogin() {
-//        val phone = viewModel.getPhone()
-//        val password = viewModel.getPassword()
+//        val password: String = inputPassword.editText?.text.toString()
+//        val phone: String = inputPhone.editText?.text.toString()
+        val isPhoneValid = countryCodePicker.isValidFullNumber
+        val isPasswordValid = authActivity.checkPasswordValid(inputPassword)
 
-        val password: String = textInputLayoutPassword.editText?.text.toString()
-        val phone: String = textInputLayoutPhone.editText?.text.toString()
-
-        if (checkPasswordValid(textInputLayoutPassword) && checkPhoneValid()) {
+        if (isPasswordValid && isPhoneValid) {
             Toast.makeText(context, "YOU ARE LOGGED IN NOW", Toast.LENGTH_SHORT).show()
-        } else if (!checkPasswordValid(textInputLayoutPassword)) {
-            textInputLayoutPassword.isErrorEnabled = true
-            textInputLayoutPassword.error = "Wrong password"
-        } else if (!checkPhoneValid()) {
-            textInputLayoutPhone.isErrorEnabled = true
-            textInputLayoutPhone.error = "Wrong phone number"
+            // @TODO Retrofit login request
+        } else if (!isPasswordValid) {
+            inputPassword.isErrorEnabled = true
+            inputPassword.error = "Wrong password"
+        } else if (!isPhoneValid) {
+            inputPhone.isErrorEnabled = true
+            inputPhone.error = "Wrong phone number"
         }
-    }
-
-    private fun checkPhoneValid(): Boolean {
-        log(context, "Phone number valid = ${countryCodePicker.isValidFullNumber}")
-        return countryCodePicker.isValidFullNumber
     }
 }
 
 /*
 @TODO Debug subtitle - Done
-@TODO Error checker
+@TODO Error checker - Done
 @TODO Retrofit
-@TODO onClick TextViews
+@TODO onClick TextViews - Done
+@TODO Move reading subtitles to SplashScreen
  */

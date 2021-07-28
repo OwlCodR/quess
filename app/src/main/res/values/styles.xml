@@ -22,4 +22,16 @@
         <item name="boxCornerRadiusTopStart">10dp</item>
         <item name="boxStrokeWidth">0.7dp</item>
     </style>
+
+    <style name="Widget.MaterialComponents.TextView.SmallText" parent="Widget.MaterialComponents.TextView">
+        <item name="fontFamily">@font/proxima_nova_regular</item>
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.TextView.SmallTextClickable" parent="Widget.MaterialComponents.TextView">
+        <item name="fontFamily">@font/proxima_nova_regular</item>
+        <item name="android:textColor">@color/text_button</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
 </resources>

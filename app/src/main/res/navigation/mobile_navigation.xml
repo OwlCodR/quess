@@ -22,4 +22,6 @@
         android:name="com.votenote.net.ui.search.SearchFragment"
         android:label="@string/menu_search"
         tools:layout="@layout/fragment_profile" />
+
+
 </navigation>

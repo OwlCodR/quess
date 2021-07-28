@@ -22,11 +22,11 @@
         <item>Your choice. Your opinion.</item>
         <item>It is alpha. So, you are alpha-tester.</item>
         <item>It is alpha. Looks like it works, interesting</item>
-        <item>It is alpha. Well, it didnt crash</item>
+        <item>It is alpha. Well, it hasnt crash yet</item>
         <item>It is alpha. Beta coming soon</item>
         <item>It is alpha. Thare mey be sam typos</item>
         <item>It is alpha. Contact with developers if you see some bugs</item>
-        <item>It is alpha. Look! Its a bug here, try to get it</item>
+        <item>It is alpha. Look! Its a bug here, try to catch it</item>
         <item>It is alpha. If we paid 1$ per crash, you probably would have a 1kk$</item>
     </string-array>
     <string name="sign_in">Sign In</string>
@@ -46,4 +46,5 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="tag">Tag</string>
+    <string name="have_an_invitation_code"><u>I have an invitation code</u></string>
 </resources>

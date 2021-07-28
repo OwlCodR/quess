@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="subtitle" type="String"/>
+        <variable name="authActivity" type="com.votenote.net.ui.auth.AuthActivity"/>
         <variable name="handler" type="com.votenote.net.ui.auth.register.RegisterFragment" />
     </data>
 
@@ -46,8 +46,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="-5dp"
+            android:gravity="center"
             android:fontFamily="@font/proxima_nova_light"
-            android:text="@{subtitle}"
+            android:text="@{authActivity.getSubtitle()}"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
@@ -68,11 +69,10 @@
                 android:padding="20dp">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayoutRegisterTag"
+                    android:id="@+id/textInputLayoutTag"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"
                     android:textColorHint="@color/gray"
                     android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                     app:errorEnabled="true"
@@ -83,7 +83,7 @@
                         android:layout_height="match_parent"
                         android:fontFamily="sans-serif-light"
                         android:hint="@string/tag"
-                        android:inputType="textPassword"
+                        android:inputType="text"
                         android:textSize="18sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -103,7 +103,7 @@
                         app:ccp_hintExampleNumber="true" />
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/textInputLayoutLoginPhone"
+                        android:id="@+id/textInputLayoutPhone"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -123,7 +123,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayoutRegisterPassword"
+                    android:id="@+id/textInputLayoutPassword"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -144,7 +144,7 @@
                         android:textSize="18sp" />
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayoutRegisterRepeatPassword"
+                    android:id="@+id/textInputLayoutRepeatPassword"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -197,13 +197,29 @@
                 android:text="Already a member?" />
 
             <TextView
-                android:id="@+id/textViewSignUpNow"
+                android:id="@+id/textViewSignInNow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:autoLink="none"
                 android:fontFamily="@font/proxima_nova_regular"
                 android:text="Sign in now" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutAlphaTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Widget.MaterialComponents.TextView.SmallTextClickable"
+                android:id="@+id/textViewInvitationCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/proxima_nova_regular"
+                android:text="@string/have_an_invitation_code" />
         </LinearLayout>
     </LinearLayout>
 </layout>

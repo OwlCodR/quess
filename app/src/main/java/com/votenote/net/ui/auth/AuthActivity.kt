@@ -7,8 +7,13 @@ import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import com.google.android.material.textfield.TextInputLayout
 import com.votenote.net.R
-import com.votenote.net.databinding.ActivityLoginBinding
+import com.votenote.net.databinding.ActivityAuthBinding
+import com.votenote.net.log
 import com.votenote.net.ui.auth.login.LoginFragment
 import com.votenote.net.ui.auth.register.RegisterFragment
 
@@ -18,7 +23,7 @@ import com.votenote.net.ui.auth.register.RegisterFragment
  */
 class AuthActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: ActivityAuthBinding
     private val hideHandler = Handler()
 
     @SuppressLint("InlinedApi")
@@ -36,26 +41,16 @@ class AuthActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        log(this, "onCreate()")
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        Log.d("TEST", "AHAH")
-        Toast.makeText(this, "HAH!", Toast.LENGTH_SHORT).show()
-
         val isFirst = intent.getBooleanExtra("isFirst", true)
-
-        // change it
         val fragment: Fragment = if (isFirst) RegisterFragment() else LoginFragment()
-
-        Log.d("TEST", "We have $isFirst")
-
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.fragmentContainerViewAuth, fragment)
-            .commit()
+        log(this, "isFirst = $isFirst")
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -65,6 +60,41 @@ class AuthActivity : AppCompatActivity() {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(100)
+    }
+
+    fun checkPasswordValid(inputPassword: TextInputLayout): Boolean {
+        val errorHint: String
+        val password: String = inputPassword.editText?.text.toString()
+        when {
+            password.length < 8 -> {
+                errorHint = "Password is too short"
+            }
+            password.length > 128 -> {
+                errorHint = "Password is too long"
+            }
+            !Regex(".*[0-9].*").containsMatchIn(password) -> {
+                errorHint = "Password must contain at least 1 digit"
+            }
+            !Regex(".*[a-zA-Z].*").containsMatchIn(password) -> {
+                errorHint = "Password must contain at least 1 letter"
+            }
+            else -> {
+                inputPassword.isErrorEnabled = false
+                inputPassword.hint = "Password"
+                return true
+            }
+        }
+        inputPassword.hint = errorHint
+        log(this, "Password error_hint = $errorHint")
+        return false
+    }
+
+    fun getSubtitle(): String {
+        val subtitles = resources.getStringArray(R.array.subtitles)
+        val rand = subtitles.indices.random()
+        val subtitle = subtitles[rand]
+        log(this, "Subtitle today is '${subtitle}'")
+        return subtitle
     }
 
     private fun hide() {
