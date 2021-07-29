@@ -47,4 +47,5 @@
     <string name="login_failed">"Login failed"</string>
     <string name="tag">Tag</string>
     <string name="have_an_invitation_code"><u>I have an invitation code</u></string>
+    <string name="sign_in_now"><u>Sign in now</u></string>
 </resources>

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
 import com.votenote.net.R
@@ -98,12 +99,21 @@ class LoginFragment : Fragment() {
         if (isPasswordValid && isPhoneValid) {
             Toast.makeText(context, "YOU ARE LOGGED IN NOW", Toast.LENGTH_SHORT).show()
             // @TODO Retrofit login request
-        } else if (!isPasswordValid) {
-            inputPassword.isErrorEnabled = true
-            inputPassword.error = "Wrong password"
-        } else if (!isPhoneValid) {
-            inputPhone.isErrorEnabled = true
-            inputPhone.error = "Wrong phone number"
+        } else {
+            Snackbar.make(
+                requireView(),
+                "Login error.\nCheck the correctness of the entered data.",
+                Snackbar.LENGTH_SHORT)
+                .show()
+
+            if (!isPasswordValid) {
+                inputPassword.isErrorEnabled = true
+                inputPassword.error = "Wrong password"
+            }
+            if (!isPhoneValid) {
+                inputPhone.isErrorEnabled = true
+                inputPhone.error = "Wrong phone number"
+            }
         }
     }
 }

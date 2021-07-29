@@ -1,21 +1,13 @@
 package com.votenote.net.ui.auth
 
-import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.votenote.net.R
 import com.votenote.net.databinding.ActivityAuthBinding
 import com.votenote.net.log
-import com.votenote.net.ui.auth.login.LoginFragment
-import com.votenote.net.ui.auth.register.RegisterFragment
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -49,7 +41,6 @@ class AuthActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val isFirst = intent.getBooleanExtra("isFirst", true)
-        val fragment: Fragment = if (isFirst) RegisterFragment() else LoginFragment()
         log(this, "isFirst = $isFirst")
     }
 
@@ -65,17 +56,21 @@ class AuthActivity : AppCompatActivity() {
     fun checkPasswordValid(inputPassword: TextInputLayout): Boolean {
         val errorHint: String
         val password: String = inputPassword.editText?.text.toString()
+
+        val minLength = 6
+        val maxLength = 128
+
         when {
-            password.length < 8 -> {
+            password.length < minLength -> {
                 errorHint = "Password is too short"
             }
-            password.length > 128 -> {
+            password.length > maxLength -> {
                 errorHint = "Password is too long"
             }
-            !Regex(".*[0-9].*").containsMatchIn(password) -> {
+            !Regex("[0-9]").containsMatchIn(password) -> {
                 errorHint = "Password must contain at least 1 digit"
             }
-            !Regex(".*[a-zA-Z].*").containsMatchIn(password) -> {
+            !Regex("[a-zA-Z]").containsMatchIn(password) -> {
                 errorHint = "Password must contain at least 1 letter"
             }
             else -> {

@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="8dp">
 
     <data>
-        <variable name="authActivity" type="com.votenote.net.ui.auth.AuthActivity"/>
-        <variable name="handler" type="com.votenote.net.ui.auth.register.RegisterFragment" />
+        <variable
+            name="authActivity"
+            type="com.votenote.net.ui.auth.AuthActivity" />
+
+        <variable
+            name="handler"
+            type="com.votenote.net.ui.auth.register.RegisterFragment" />
     </data>
 
     <LinearLayout
@@ -46,8 +51,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="-5dp"
-            android:gravity="center"
             android:fontFamily="@font/proxima_nova_light"
+            android:gravity="center"
             android:text="@{authActivity.getSubtitle()}"
             android:textColor="@color/black"
             android:textSize="14sp" />
@@ -88,9 +93,9 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal">
 
                     <com.hbb20.CountryCodePicker
@@ -122,17 +127,17 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayoutPassword"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="20dp"
-                    android:textColorHint="@color/gray"
                     android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                     app:errorEnabled="true"
-                    app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="@color/gray"
+                    app:endIconMode="password_toggle"
+                    app:errorIconDrawable="@null"
                     app:startIconDrawable="@drawable/ic_password_24">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -143,24 +148,23 @@
                         android:inputType="textPassword"
                         android:textSize="18sp" />
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayoutRepeatPassword"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="20dp"
-                    android:textColorHint="@color/gray"
                     android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
+                    app:endIconMode="password_toggle"
+                    app:errorIconDrawable="@null"
                     app:errorEnabled="true"
-                    app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="@color/gray"
                     app:startIconDrawable="@drawable/ic_password_24">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:fontFamily="sans-serif-light"
-                        android:hint="Repeat Password"
+                        android:hint="Repeat password"
                         android:inputType="textPassword"
                         android:textSize="18sp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -187,38 +191,44 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingTop="15dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="5dp">
 
             <TextView
+                style="@style/Widget.MaterialComponents.TextView.SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/proxima_nova_regular"
                 android:text="Already a member?" />
 
             <TextView
                 android:id="@+id/textViewSignInNow"
+                style="@style/Widget.MaterialComponents.TextView.SmallTextClickable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:autoLink="none"
-                android:fontFamily="@font/proxima_nova_regular"
-                android:text="Sign in now" />
+                android:text="@string/sign_in_now" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayoutAlphaTest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
-                style="@style/Widget.MaterialComponents.TextView.SmallTextClickable"
                 android:id="@+id/textViewInvitationCode"
+                style="@style/Widget.MaterialComponents.TextView.SmallTextClickable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/proxima_nova_regular"
+                android:paddingStart="15dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="15dp"
                 android:text="@string/have_an_invitation_code" />
         </LinearLayout>
     </LinearLayout>

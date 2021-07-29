@@ -11,8 +11,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
 import com.votenote.net.R
@@ -20,6 +20,7 @@ import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.log
 import com.votenote.net.ui.auth.AuthActivity
 import com.votenote.net.ui.auth.AuthViewModel
+import org.w3c.dom.Text
 
 class RegisterFragment : Fragment() {
 
@@ -41,10 +42,9 @@ class RegisterFragment : Fragment() {
 
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
-
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         log(context, "onCreateView()")
 
         binding = FragmentRegisterBinding.inflate(inflater, container, false)
@@ -76,19 +76,31 @@ class RegisterFragment : Fragment() {
         log(context, "onViewCreated()")
 
         textViewSignIn.setOnClickListener {
-            navController.navigate(R.id.action_nav_login_to_nav_register)
+            navController.popBackStack()
         }
-        textViewInvitationCode.setOnClickListener {  }
+
+        textViewInvitationCode.setOnClickListener {
+
+        }
 
         countryCodePicker.registerCarrierNumberEditText(binding.editTextPhone)
         countryCodePicker.setPhoneNumberValidityChangeListener {
-            if (countryCodePicker.isValidFullNumber)
+            if (countryCodePicker.isValidFullNumber) {
                 inputPhone.isErrorEnabled = false
+            }
         }
 
         inputPassword.editText?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                authActivity.checkPasswordValid(inputPassword)
+            }
+        })
+
+        inputPassword.editText?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -98,7 +110,6 @@ class RegisterFragment : Fragment() {
 
         inputTag.editText?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -108,9 +119,6 @@ class RegisterFragment : Fragment() {
     }
 
     fun onRegister() {
-        val password = inputPassword.editText?.text.toString()
-        val repeatPassword = inputRepeatPassword.editText?.text.toString()
-
         val isTagValid = checkTagValid()
         val isTagUnique = isTagUnique(inputTag.editText?.text.toString())
 
@@ -119,10 +127,22 @@ class RegisterFragment : Fragment() {
 
         val isPasswordValid = authActivity.checkPasswordValid(inputPassword)
 
-        if (isPasswordValid && isPhoneValid && isTagValid && isPhoneUnique && isTagUnique) {
+        if (arePasswordsEqual() && isPasswordValid &&
+            isPhoneValid && isTagValid &&
+            isPhoneUnique && isTagUnique) {
             Toast.makeText(context, "YOU ARE LOGGED IN NOW", Toast.LENGTH_SHORT).show()
             // @TODO Retrofit login request
         } else {
+            Snackbar.make(requireView(),
+                "Registration error.\nCheck the correctness of the entered data.",
+                Snackbar.LENGTH_SHORT)
+                .show()
+
+            if (!arePasswordsEqual()) {
+                inputRepeatPassword.isErrorEnabled = true
+                inputRepeatPassword.error = "Wrong password"
+                inputRepeatPassword.hint = "Password mismatch"
+            }
             if (!isPasswordValid) {
                 inputPassword.isErrorEnabled = true
                 inputPassword.error = "Wrong password"
@@ -148,6 +168,13 @@ class RegisterFragment : Fragment() {
         }
     }
 
+    private fun arePasswordsEqual(): Boolean {
+        val password = inputPassword.editText?.text.toString()
+        val repeatPassword = inputRepeatPassword.editText?.text.toString()
+
+        return password == repeatPassword
+    }
+
     private fun checkTagValid(): Boolean {
         val tag: String = inputTag.editText?.text.toString()
         val errorHint: String
@@ -158,17 +185,19 @@ class RegisterFragment : Fragment() {
             tag.length > 16 -> {
                 errorHint = "Tag is too long"
             }
-            Regex(".*/s.*").containsMatchIn(tag) -> {
+            Regex("\\s").containsMatchIn(tag) -> {
                 errorHint = "Tag must not contain spaces"
             }
-            Regex(".*^/w.*").containsMatchIn(tag) -> {
-                errorHint = "Tag must contain only letters, digits or underscores"
+            Regex("[^a-zA-Z0-9_]").containsMatchIn(tag) -> {
+                log(context, Regex("[^a-zA-Z0-9_]").containsMatchIn(tag).toString())
+                errorHint = "Only english letters, digits or '_' are allowed"
             }
-            isTagUnique(tag) -> {
-                log(context, "Password is valid and unique")
+            else -> {
+                log(context, "Tag is valid")
+                inputTag.isErrorEnabled = false
+                inputTag.hint = "Tag"
                 return true
             }
-            else -> errorHint = "Tag"
         }
         inputTag.hint = errorHint
         log(context, "Tag errorHint = $errorHint")

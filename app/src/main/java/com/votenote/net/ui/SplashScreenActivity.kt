@@ -2,12 +2,11 @@ package com.votenote.net.ui
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.Window
 import android.view.WindowManager
-import com.votenote.net.MainActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.votenote.net.R
 import com.votenote.net.log
 import com.votenote.net.ui.auth.AuthActivity
