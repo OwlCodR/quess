@@ -1,11 +1,13 @@
 package com.votenote.net.ui.auth.register
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -18,9 +20,16 @@ import com.hbb20.CountryCodePicker
 import com.votenote.net.R
 import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.log
+import com.votenote.net.model.Answer
+import com.votenote.net.model.Meta
+import com.votenote.net.model.User
+import com.votenote.net.retrofit.common.Common
+import com.votenote.net.retrofit.service.RetrofitServices
 import com.votenote.net.ui.auth.AuthActivity
 import com.votenote.net.ui.auth.AuthViewModel
-import org.w3c.dom.Text
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RegisterFragment : Fragment() {
 
@@ -37,21 +46,28 @@ class RegisterFragment : Fragment() {
     private lateinit var countryCodePicker: CountryCodePicker
     private lateinit var textViewSignIn: TextView
     private lateinit var textViewInvitationCode: TextView
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var authActivity: AuthActivity
 
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
+
+    private lateinit var retrofitService: RetrofitServices
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         log(context, "onCreateView()")
+
+        retrofitService = Common.retrofitService
 
         binding = FragmentRegisterBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(requireActivity()).get(AuthViewModel::class.java)
 
         inputTag = binding.textInputLayoutTag
         inputPhone = binding.textInputLayoutPhone
+        progressBar = binding.progressBar
         inputPassword = binding.textInputLayoutPassword
         textViewSignIn = binding.textViewSignInNow
         countryCodePicker = binding.countryCodePicker
@@ -118,7 +134,19 @@ class RegisterFragment : Fragment() {
         })
     }
 
+    private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        progressBar.visibility = View.GONE
+    }
+
     fun onRegister() {
+        val password = inputPassword.editText?.text.toString()
+        val phone = countryCodePicker.fullNumberWithPlus
+        val tag = inputTag.editText?.toString()
+
         val isTagValid = checkTagValid()
         val isTagUnique = isTagUnique(inputTag.editText?.text.toString())
 
@@ -130,13 +158,44 @@ class RegisterFragment : Fragment() {
         if (arePasswordsEqual() && isPasswordValid &&
             isPhoneValid && isTagValid &&
             isPhoneUnique && isTagUnique) {
-            Toast.makeText(context, "YOU ARE LOGGED IN NOW", Toast.LENGTH_SHORT).show()
-            // @TODO Retrofit login request
+
+            showProgressBar()
+
+            retrofitService.register(User(password=password, phone=phone, tag=tag, meta=Meta("0.0")))
+                .enqueue(object : Callback<Answer> {
+                override fun onFailure(call: Call<Answer>, t: Throwable) {
+                    Snackbar.make(
+                        requireView(),
+                        "An error has occurred!\nCheck internet connection or try later",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    log(context, t.message.toString())
+
+                    hideProgressBar()
+                }
+
+                override fun onResponse(call: Call<Answer>, response: Response<Answer>) {
+                    log(context, "response.isSuccessful = " + response.isSuccessful)
+
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        val errorCode = body?.errorCode
+
+                    } else {
+                        log(context, response.errorBody()?.string())
+                    }
+                    Toast.makeText(context, response.body().toString(), Toast.LENGTH_LONG).show()
+
+                    hideProgressBar()
+                }
+            })
+
         } else {
-            Snackbar.make(requireView(),
+            Snackbar.make(
+                requireView(),
                 "Registration error.\nCheck the correctness of the entered data.",
-                Snackbar.LENGTH_SHORT)
-                .show()
+                Snackbar.LENGTH_SHORT
+            ).show()
 
             if (!arePasswordsEqual()) {
                 inputRepeatPassword.isErrorEnabled = true

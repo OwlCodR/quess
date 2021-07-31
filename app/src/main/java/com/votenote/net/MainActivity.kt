@@ -15,7 +15,21 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.votenote.net.databinding.ActivityMainBinding
 
-fun log(context: Context?, text:String) {
+fun log(context: Context?, text: String?) {
+    // @TODO Debug this
+//    if (text != null) {
+//        val MAX_LENGTH = 3000
+//        if (text.length > MAX_LENGTH) {
+//            val firstPart = text.split("^.{1, $MAX_LENGTH}")[0]
+//            val secondPart = text.replace(firstPart, "")
+//            Log.d(MainActivity().LOG_TAG, "${context?.javaClass?.simpleName} | ${firstPart}")
+//
+//            log(context, secondPart)
+//        } else {
+//            Log.d(MainActivity().LOG_TAG, "${context?.javaClass?.simpleName} | $text")
+//        }
+//    }
+
     Log.d(MainActivity().LOG_TAG, "${context?.javaClass?.simpleName} | $text")
 }
 
