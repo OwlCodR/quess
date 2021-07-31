@@ -1,5 +1,7 @@
 package com.votenote.net.ui.auth.register
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.opengl.Visibility
 import android.os.Bundle
 import android.text.Editable
@@ -17,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
+import com.votenote.net.MainActivity
 import com.votenote.net.R
 import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.log
@@ -25,6 +28,7 @@ import com.votenote.net.model.Meta
 import com.votenote.net.model.User
 import com.votenote.net.retrofit.common.Common
 import com.votenote.net.retrofit.service.RetrofitServices
+import com.votenote.net.ui.SplashScreenActivity
 import com.votenote.net.ui.auth.AuthActivity
 import com.votenote.net.ui.auth.AuthViewModel
 import retrofit2.Call
@@ -55,10 +59,17 @@ class RegisterFragment : Fragment() {
 
     private lateinit var retrofitService: RetrofitServices
 
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         log(context, "onCreateView()")
+
+        sharedPreferences = requireActivity().getSharedPreferences(
+                SplashScreenActivity().START_PREFERENCE,
+                Context.MODE_PRIVATE
+            )
 
         retrofitService = Common.retrofitService
 
@@ -124,6 +135,18 @@ class RegisterFragment : Fragment() {
             }
         })
 
+        inputRepeatPassword.editText?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (arePasswordsEqual()) {
+                    inputRepeatPassword.isErrorEnabled = false
+                    inputRepeatPassword.hint = "Repeat password"
+                }
+            }
+        })
+
         inputTag.editText?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -145,10 +168,10 @@ class RegisterFragment : Fragment() {
     fun onRegister() {
         val password = inputPassword.editText?.text.toString()
         val phone = countryCodePicker.fullNumberWithPlus
-        val tag = inputTag.editText?.toString()
+        val tag = inputTag.editText?.text.toString()
 
         val isTagValid = checkTagValid()
-        val isTagUnique = isTagUnique(inputTag.editText?.text.toString())
+        val isTagUnique = isTagUnique(tag)
 
         val isPhoneValid = countryCodePicker.isValidFullNumber
         val isPhoneUnique = isPhoneUnique(countryCodePicker.fullNumber)
@@ -164,32 +187,13 @@ class RegisterFragment : Fragment() {
             retrofitService.register(User(password=password, phone=phone, tag=tag, meta=Meta("0.0")))
                 .enqueue(object : Callback<Answer> {
                 override fun onFailure(call: Call<Answer>, t: Throwable) {
-                    Snackbar.make(
-                        requireView(),
-                        "An error has occurred!\nCheck internet connection or try later",
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                    log(context, t.message.toString())
-
-                    hideProgressBar()
+                    onFailure(t)
                 }
 
                 override fun onResponse(call: Call<Answer>, response: Response<Answer>) {
-                    log(context, "response.isSuccessful = " + response.isSuccessful)
-
-                    if (response.isSuccessful) {
-                        val body = response.body()
-                        val errorCode = body?.errorCode
-
-                    } else {
-                        log(context, response.errorBody()?.string())
-                    }
-                    Toast.makeText(context, response.body().toString(), Toast.LENGTH_LONG).show()
-
-                    hideProgressBar()
+                    onResponse(response)
                 }
             })
-
         } else {
             Snackbar.make(
                 requireView(),
@@ -225,6 +229,46 @@ class RegisterFragment : Fragment() {
                 inputTag.hint = "This tag already exists"
             }
         }
+    }
+
+    private fun onFailure(t: Throwable) {
+        Snackbar.make(
+            requireView(),
+            "An error has occurred!\nCheck internet connection or try later",
+            Snackbar.LENGTH_LONG
+        ).show()
+        log(context, t.message.toString())
+
+        hideProgressBar()
+    }
+
+    private fun onResponse(response: Response<Answer>) {
+        log(context, "response.isSuccessful = " + response.isSuccessful)
+
+        if (response.isSuccessful) {
+            val body = response.body()
+            val errorCode = body?.errorCode
+
+            if (errorCode == "0000") {
+                log(context, "User has been registered")
+
+                sharedPreferences
+                    .edit()
+                    .putBoolean("loggedIn", true)
+                    .apply()
+                navController.navigate(R.id.action_nav_register_to_nav_main)
+                // @TODO Navigate to Home
+            } else {
+                Snackbar.make(
+                    requireView(),
+                    "An error[$errorCode] has occurred!\n",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        log(context, "errorBody() = ${response.errorBody()?.string()}")
+        hideProgressBar()
     }
 
     private fun arePasswordsEqual(): Boolean {

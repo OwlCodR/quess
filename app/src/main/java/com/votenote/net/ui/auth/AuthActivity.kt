@@ -57,7 +57,7 @@ class AuthActivity : AppCompatActivity() {
         val errorHint: String
         val password: String = inputPassword.editText?.text.toString()
 
-        val minLength = 6
+        val minLength = 8
         val maxLength = 128
 
         when {
@@ -72,6 +72,9 @@ class AuthActivity : AppCompatActivity() {
             }
             !Regex("[a-zA-Z]").containsMatchIn(password) -> {
                 errorHint = "Password must contain at least 1 letter"
+            }
+            !Regex("[A-Z]").containsMatchIn(password) -> {
+                errorHint = "Password must contain at least 1 uppercase letter"
             }
             else -> {
                 inputPassword.isErrorEnabled = false

@@ -121,7 +121,7 @@ class LoginFragment : Fragment() {
 /*
 @TODO Debug subtitle - Done
 @TODO Error checker - Done
-@TODO Retrofit
+@TODO Retrofit - Done
 @TODO onClick TextViews - Done
 @TODO Move reading subtitles to SplashScreen
  */

@@ -46,6 +46,8 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="tag">Tag</string>
-    <string name="have_an_invitation_code"><u>I have an invitation code</u></string>
+    <string name="have_an_invitation_code"><u>I have an invite code</u></string>
     <string name="sign_in_now"><u>Sign in now</u></string>
+    <string name="logout">Logout</string>
+    <string name="menu_auth">Auth</string>
 </resources>

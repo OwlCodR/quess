@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menu_navigation"
+    app:startDestination="@+id/nav_polls">
+
+    <fragment
+        android:id="@+id/nav_polls"
+        android:name="com.votenote.net.ui.polls.PollsFragment"
+        android:label="@string/menu_polls"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_polls_to_nav_auth"
+            app:destination="@id/nav_auth" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.votenote.net.ui.profile.ProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_nav_profile_to_nav_auth"
+            app:destination="@id/nav_auth" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_search"
+        android:name="com.votenote.net.ui.search.SearchFragment"
+        android:label="@string/menu_search"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_nav_search_to_nav_auth"
+            app:destination="@id/nav_auth" />
+    </fragment>
+
+    <activity
+        android:id="@+id/nav_auth"
+        android:name="com.votenote.net.ui.auth.AuthActivity"
+        android:label="@string/menu_auth"
+        tools:layout="@layout/fragment_profile" />
+</navigation>

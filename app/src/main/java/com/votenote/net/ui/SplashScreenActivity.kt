@@ -7,6 +7,7 @@ import android.os.Handler
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.votenote.net.MainActivity
 import com.votenote.net.R
 import com.votenote.net.log
 import com.votenote.net.ui.auth.AuthActivity
@@ -34,7 +35,7 @@ class SplashScreenActivity : AppCompatActivity() {
         // sharedPreference.edit().clear().apply()
 
         val isFirst = sharedPreference.getBoolean("isFirst", true)
-        val loggedIn = false
+        val loggedIn = sharedPreference.getBoolean("loggedIn", false)
 
         if (isFirst || !loggedIn) {
             log(this, "First start or not logged in")
@@ -45,10 +46,14 @@ class SplashScreenActivity : AppCompatActivity() {
                 .apply()
 
             val intent = Intent(this, AuthActivity::class.java)
-            intent.putExtra("isFirst", isFirst)
             startActivity(intent)
             finish()
-        } else
+        } else {
             log(this, "Not first login or already logged in")
+
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }
