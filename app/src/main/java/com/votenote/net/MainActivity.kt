@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.appBarMain.toolbar)
 
         sharedPreferences = getSharedPreferences(
-            SplashScreenActivity().APP_PREFERENCE,
+            APP_PREFERENCE,
             Context.MODE_PRIVATE
         )
 

@@ -43,9 +43,10 @@ class SplashScreenActivity : AppCompatActivity() {
         retrofitService = Common.retrofitService
 
         Handler(Looper.getMainLooper()).postDelayed({
-            setApiVersion()
             checkFirstStart()
         }, SPLASH_SCREEN_TIME)
+
+        setApiVersion()
     }
 
     private fun setApiVersion() {
@@ -66,7 +67,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
     private fun onFailure(t: Throwable) {
         log(this, t.message.toString())
-        showSnackbar("An error has occurred!\nCheck internet connection or try later")
     }
 
     private fun onResponse(response: Response<Answer>) {
@@ -76,15 +76,17 @@ class SplashScreenActivity : AppCompatActivity() {
         if (response.isSuccessful) {
             val body = response.body()
             val errorCode = body?.errorCode
-            val version = body?.meta?.version
+            val apiVersion = body?.meta?.version
+
+            log(this, "apiVersion = $apiVersion")
 
             if (errorCode == "0000") {
                 sharedPreference
                     .edit()
-                    .putString(MainActivity().API_VERSION_TAG, version)
+                    .putString(MainActivity().API_VERSION_TAG, apiVersion)
                     .apply()
             } else {
-                showSnackbar("An error[$errorCode] has occurred!\n")
+                log(this, "An error[$errorCode] has occurred!\n")
             }
         }
     }
@@ -108,13 +110,9 @@ class SplashScreenActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSnackbar(s: String) {
-        Snackbar.make(view, s, Snackbar.LENGTH_LONG).show()
-    }
 
     private fun startActivity(activity: Class<*>) {
         val intent = Intent(this, activity)
         startActivity(intent)
-        finish()
     }
 }

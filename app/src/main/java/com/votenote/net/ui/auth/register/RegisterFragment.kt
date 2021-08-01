@@ -17,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
+import com.votenote.net.MainActivity
 import com.votenote.net.R
 import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.log
@@ -25,7 +26,6 @@ import com.votenote.net.model.Meta
 import com.votenote.net.model.User
 import com.votenote.net.retrofit.common.Common
 import com.votenote.net.retrofit.service.RetrofitServices
-import com.votenote.net.ui.SplashScreenActivity
 import com.votenote.net.ui.auth.AuthActivity
 import com.votenote.net.ui.auth.AuthViewModel
 import retrofit2.Call
@@ -56,15 +56,15 @@ class RegisterFragment : Fragment() {
 
     private lateinit var retrofitService: RetrofitServices
 
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreference: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         log(context, "onCreateView()")
 
-        sharedPreferences = requireActivity().getSharedPreferences(
-                SplashScreenActivity().APP_PREFERENCE,
+        sharedPreference = requireActivity().getSharedPreferences(
+                MainActivity().APP_PREFERENCE,
                 Context.MODE_PRIVATE
             )
 
@@ -197,11 +197,7 @@ class RegisterFragment : Fragment() {
                     }
                 )
         } else {
-            Snackbar.make(
-                requireView(),
-                "Registration error.\nCheck the correctness of the entered data.",
-                Snackbar.LENGTH_SHORT
-            ).show()
+            showSnackbar("Registration error.\nCheck the correctness of the entered data.")
 
             if (!arePasswordsEqual()) {
                 inputRepeatPassword.isErrorEnabled = true
@@ -236,11 +232,7 @@ class RegisterFragment : Fragment() {
     private fun onFailure(t: Throwable) {
         log(context, t.message.toString())
 
-        Snackbar.make(
-            requireView(),
-            "An error has occurred!\nCheck internet connection or try later",
-            Snackbar.LENGTH_LONG
-        ).show()
+        showSnackbar("An error has occurred!\nCheck internet connection or try later")
 
         hideProgressBar()
     }
@@ -256,18 +248,14 @@ class RegisterFragment : Fragment() {
             if (errorCode == "0000") {
                 log(context, "User has been registered")
 
-                sharedPreferences
+                sharedPreference
                     .edit()
                     .putBoolean("loggedIn", true)
                     .apply()
                 navController.navigate(R.id.action_nav_register_to_nav_main)
                 // @TODO Navigate to Home
             } else {
-                Snackbar.make(
-                    requireView(),
-                    "An error[$errorCode] has occurred!\n",
-                    Snackbar.LENGTH_LONG
-                ).show()
+                showSnackbar("An error[$errorCode] has occurred!\n")
             }
         }
 
@@ -320,5 +308,9 @@ class RegisterFragment : Fragment() {
         log(context, "isTagUnique()")
         // @TODO Make request
         return true
+    }
+
+    private fun showSnackbar(s: String) {
+        Snackbar.make(requireView(), s, Snackbar.LENGTH_LONG).show()
     }
 }

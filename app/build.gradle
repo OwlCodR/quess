@@ -24,6 +24,7 @@ android {
         }
 
         buildConfigField 'String', 'API_URL', properties.getProperty('API_URL')
+        buildConfigField 'String', 'DEFAULT_API_VERSION', properties.getProperty('DEFAULT_API_VERSION')
     }
 
     buildTypes {
