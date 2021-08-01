@@ -40,6 +40,8 @@ fun log(context: Context?, text: String?) {
 }
 
 class MainActivity : AppCompatActivity() {
+    val APP_PREFERENCE = "APP_PREFERENCE"
+    val API_VERSION_TAG = "API_VERSION"
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.appBarMain.toolbar)
 
         sharedPreferences = getSharedPreferences(
-            SplashScreenActivity().START_PREFERENCE,
+            SplashScreenActivity().APP_PREFERENCE,
             Context.MODE_PRIVATE
         )
 

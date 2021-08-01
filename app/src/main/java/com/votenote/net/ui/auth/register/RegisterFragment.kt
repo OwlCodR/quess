@@ -2,7 +2,6 @@ package com.votenote.net.ui.auth.register
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.opengl.Visibility
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -19,7 +17,6 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
-import com.votenote.net.MainActivity
 import com.votenote.net.R
 import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.log
@@ -67,7 +64,7 @@ class RegisterFragment : Fragment() {
         log(context, "onCreateView()")
 
         sharedPreferences = requireActivity().getSharedPreferences(
-                SplashScreenActivity().START_PREFERENCE,
+                SplashScreenActivity().APP_PREFERENCE,
                 Context.MODE_PRIVATE
             )
 
@@ -184,16 +181,21 @@ class RegisterFragment : Fragment() {
 
             showProgressBar()
 
-            retrofitService.register(User(password=password, phone=phone, tag=tag, meta=Meta("0.0")))
-                .enqueue(object : Callback<Answer> {
-                override fun onFailure(call: Call<Answer>, t: Throwable) {
-                    onFailure(t)
-                }
+            val newUser = User(password=password, phone=phone, tag=tag, meta=Meta("0.0"))
 
-                override fun onResponse(call: Call<Answer>, response: Response<Answer>) {
-                    onResponse(response)
-                }
-            })
+            retrofitService
+                .register(newUser)
+                .enqueue(
+                    object: Callback<Answer> {
+                        override fun onFailure(call: Call<Answer>, t: Throwable) {
+                            onFailure(t)
+                        }
+
+                        override fun onResponse(call: Call<Answer>, response: Response<Answer>) {
+                            onResponse(response)
+                        }
+                    }
+                )
         } else {
             Snackbar.make(
                 requireView(),
@@ -232,18 +234,20 @@ class RegisterFragment : Fragment() {
     }
 
     private fun onFailure(t: Throwable) {
+        log(context, t.message.toString())
+
         Snackbar.make(
             requireView(),
             "An error has occurred!\nCheck internet connection or try later",
             Snackbar.LENGTH_LONG
         ).show()
-        log(context, t.message.toString())
 
         hideProgressBar()
     }
 
     private fun onResponse(response: Response<Answer>) {
         log(context, "response.isSuccessful = " + response.isSuccessful)
+        log(context, "errorBody() = ${response.errorBody()?.string()}")
 
         if (response.isSuccessful) {
             val body = response.body()
@@ -267,7 +271,6 @@ class RegisterFragment : Fragment() {
             }
         }
 
-        log(context, "errorBody() = ${response.errorBody()?.string()}")
         hideProgressBar()
     }
 
