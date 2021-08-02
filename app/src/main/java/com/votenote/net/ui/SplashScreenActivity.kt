@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.votenote.net.MainActivity
 import com.votenote.net.R
+import com.votenote.net.enums.SharedPreferencesTags
 import com.votenote.net.log
 import com.votenote.net.model.Answer
 import com.votenote.net.retrofit.common.Common
@@ -83,7 +84,7 @@ class SplashScreenActivity : AppCompatActivity() {
             if (errorCode == "0000") {
                 sharedPreference
                     .edit()
-                    .putString(MainActivity().API_VERSION_TAG, apiVersion)
+                    .putString(SharedPreferencesTags.API_VERSION.name, apiVersion)
                     .apply()
             } else {
                 log(this, "An error[$errorCode] has occurred!\n")
@@ -109,7 +110,6 @@ class SplashScreenActivity : AppCompatActivity() {
             startActivity(MainActivity::class.java)
         }
     }
-
 
     private fun startActivity(activity: Class<*>) {
         val intent = Intent(this, activity)

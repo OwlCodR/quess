@@ -53,7 +53,7 @@ class AuthActivity : AppCompatActivity() {
         delayedHide(100)
     }
 
-    fun checkPasswordValid(inputPassword: TextInputLayout): Boolean {
+    fun checkPasswordValidity(inputPassword: TextInputLayout): Boolean {
         val errorHint: String
         val password: String = inputPassword.editText?.text.toString()
 

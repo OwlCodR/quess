@@ -50,4 +50,5 @@
     <string name="sign_in_now"><u>Sign in now</u></string>
     <string name="logout">Logout</string>
     <string name="menu_auth">Auth</string>
+    <string name="invite_code">Invite code</string>
 </resources>

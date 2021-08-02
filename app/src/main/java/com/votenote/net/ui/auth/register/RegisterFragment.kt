@@ -8,19 +8,22 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
-import com.votenote.net.MainActivity
-import com.votenote.net.R
+import com.votenote.net.*
 import com.votenote.net.databinding.FragmentRegisterBinding
-import com.votenote.net.log
+import com.votenote.net.enums.ErrorCodes
+import com.votenote.net.enums.SharedPreferencesTags
 import com.votenote.net.model.Answer
 import com.votenote.net.model.Meta
 import com.votenote.net.model.User
@@ -31,6 +34,10 @@ import com.votenote.net.ui.auth.AuthViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.squareup.moshi.JsonAdapter
+
+import com.squareup.moshi.Moshi
+
 
 class RegisterFragment : Fragment() {
 
@@ -57,6 +64,7 @@ class RegisterFragment : Fragment() {
     private lateinit var retrofitService: RetrofitServices
 
     private lateinit var sharedPreference: SharedPreferences
+    private var inviteCode: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -104,7 +112,7 @@ class RegisterFragment : Fragment() {
         }
 
         textViewInvitationCode.setOnClickListener {
-
+            showInviteCodeDialog()
         }
 
         countryCodePicker.registerCarrierNumberEditText(binding.editTextPhone)
@@ -119,7 +127,7 @@ class RegisterFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                authActivity.checkPasswordValid(inputPassword)
+                authActivity.checkPasswordValidity(inputPassword)
             }
         })
 
@@ -128,7 +136,7 @@ class RegisterFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                authActivity.checkPasswordValid(inputPassword)
+                authActivity.checkPasswordValidity(inputPassword)
             }
         })
 
@@ -154,6 +162,22 @@ class RegisterFragment : Fragment() {
         })
     }
 
+    private fun showInviteCodeDialog() {
+        val builder = AlertDialog.Builder(requireActivity())
+        val inflater = layoutInflater
+
+        val dialogLayout = inflater.inflate(R.layout.dialog_invite_code, null)
+        val inviteCodeLayout = dialogLayout.findViewById<TextInputLayout>(R.id.textInputLayoutInviteCode)
+
+        builder.setTitle("Invite code")
+        builder.setView(dialogLayout)
+        builder.setPositiveButton("OK") { dialogInterface, i ->
+            inviteCode = inviteCodeLayout.editText?.text.toString()
+        }
+        builder.show()
+
+    }
+
     private fun showProgressBar() {
         progressBar.visibility = View.VISIBLE
     }
@@ -164,24 +188,23 @@ class RegisterFragment : Fragment() {
 
     fun onRegister() {
         val password = inputPassword.editText?.text.toString()
-        val phone = countryCodePicker.fullNumberWithPlus
+        val phone = countryCodePicker.fullNumberWithPlus.trim()
         val tag = inputTag.editText?.text.toString()
 
         val isTagValid = checkTagValid()
-        val isTagUnique = isTagUnique(tag)
-
         val isPhoneValid = countryCodePicker.isValidFullNumber
-        val isPhoneUnique = isPhoneUnique(countryCodePicker.fullNumber)
+        val isPasswordValid = authActivity.checkPasswordValidity(inputPassword)
 
-        val isPasswordValid = authActivity.checkPasswordValid(inputPassword)
-
-        if (arePasswordsEqual() && isPasswordValid &&
-            isPhoneValid && isTagValid &&
-            isPhoneUnique && isTagUnique) {
+        if (arePasswordsEqual() && inviteCode != null &&
+            isPasswordValid && isPhoneValid && isTagValid) {
 
             showProgressBar()
 
-            val newUser = User(password=password, phone=phone, tag=tag, meta=Meta("0.0"))
+            val apiVersion = sharedPreference.getString(
+                SharedPreferencesTags.API_VERSION.name,
+                    BuildConfig.DEFAULT_API_VERSION)
+
+            val newUser = User(password=password, phone=phone, tag=tag, meta=Meta(apiVersion))
 
             retrofitService
                 .register(newUser)
@@ -212,19 +235,12 @@ class RegisterFragment : Fragment() {
                 inputPhone.isErrorEnabled = true
                 inputPhone.error = "Wrong phone number"
             }
-            if (!isPhoneUnique) {
-                inputPhone.isErrorEnabled = true
-                inputPhone.error = "Phone number is not unique"
-                inputPhone.hint = "This phone already exists"
-            }
             if (!isTagValid) {
                 inputTag.isErrorEnabled = true
                 inputTag.error = "Wrong tag"
             }
-            if (!isTagUnique) {
-                inputTag.isErrorEnabled = true
-                inputTag.error = "Phone number is not unique"
-                inputTag.hint = "This tag already exists"
+            if (inviteCode == null) {
+                showSnackbar("Error!\nAn invite code is required.")
             }
         }
     }
@@ -239,13 +255,12 @@ class RegisterFragment : Fragment() {
 
     private fun onResponse(response: Response<Answer>) {
         log(context, "response.isSuccessful = " + response.isSuccessful)
-        log(context, "errorBody() = ${response.errorBody()?.string()}")
 
         if (response.isSuccessful) {
             val body = response.body()
-            val errorCode = body?.errorCode
+            val code: String? = body?.errorCode
 
-            if (errorCode == "0000") {
+            if (code == "0000") {
                 log(context, "User has been registered")
 
                 sharedPreference
@@ -253,9 +268,41 @@ class RegisterFragment : Fragment() {
                     .putBoolean("loggedIn", true)
                     .apply()
                 navController.navigate(R.id.action_nav_register_to_nav_main)
-                // @TODO Navigate to Home
+            }
+        } else {
+            /*
+                There are 2 ways:
+                1. We have some unpredictable server exception, i.e. html code of error-page
+                2. We have some predictable json with "error" and "meta" fields
+             */
+
+            val errorBodyString = response.errorBody()!!.string()
+            val isHtmlPage = errorBodyString.contains("HTML")
+
+            if (isHtmlPage) {
+                log(context, "An error[SERVER_ERROR] has occurred!\n")
             } else {
-                showSnackbar("An error[$errorCode] has occurred!\n")
+                val moshi = Moshi.Builder().build()
+                val jsonAdapter: JsonAdapter<Answer> = moshi.adapter<Answer>(Answer::class.java)
+
+                val answer: Answer? = jsonAdapter.fromJson(errorBodyString)
+                val errorCode = answer?.errorCode
+
+                when (errorCode) {
+                    ErrorCodes.PHONE_EXISTS.name -> {
+                        inputPhone.isErrorEnabled = true
+                        inputPhone.error = "Phone number is not unique"
+                        inputPhone.hint = "This phone already exists"
+                    }
+                    ErrorCodes.TAG_EXISTS.name -> {
+                        inputTag.isErrorEnabled = true
+                        inputTag.error = "Phone number is not unique"
+                        inputTag.hint = "This tag already exists"
+                    }
+                }
+
+                log(context, "An error[$errorCode] has occurred!")
+                showSnackbar("An error[$errorCode] has occurred!")
             }
         }
 
@@ -293,21 +340,10 @@ class RegisterFragment : Fragment() {
                 return true
             }
         }
+
         inputTag.hint = errorHint
         log(context, "Tag errorHint = $errorHint")
         return false
-    }
-
-    private fun isPhoneUnique(phone: String): Boolean {
-        log(context, "isPhoneUnique()")
-        // @TODO Make request
-        return true
-    }
-
-    private fun isTagUnique(tag: String): Boolean {
-        log(context, "isTagUnique()")
-        // @TODO Make request
-        return true
     }
 
     private fun showSnackbar(s: String) {

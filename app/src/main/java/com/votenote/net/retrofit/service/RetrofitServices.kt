@@ -1,6 +1,7 @@
 package com.votenote.net.retrofit.service
 
 import com.votenote.net.model.Answer
+import com.votenote.net.model.Meta
 import com.votenote.net.model.User
 import retrofit2.Call
 import retrofit2.http.Body
@@ -13,4 +14,7 @@ interface RetrofitServices {
 
     @POST("register")
     fun register(@Body user: User): Call<Answer>
+
+    @GET("login")
+    fun login(@Body user: User): Call<Answer>
 }

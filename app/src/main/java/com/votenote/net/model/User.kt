@@ -1,11 +1,13 @@
 package com.votenote.net.model
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class User (
-    val phone: String? = null,
-    val password: String? = null,
-    val tag: String? = null,
-    val meta: Meta? = null
+    @field:Json(name = "phone") val phone: String? = null,
+    @field:Json(name = "password") val password: String? = null,
+    @field:Json(name = "tag") val tag: String? = null,
+    @field:Json(name = "meta") val meta: Meta? = null,
+    @field:Json(name = "invitecode") val inviteCode: String? = null
 )

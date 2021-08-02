@@ -41,7 +41,6 @@ fun log(context: Context?, text: String?) {
 
 class MainActivity : AppCompatActivity() {
     val APP_PREFERENCE = "APP_PREFERENCE"
-    val API_VERSION_TAG = "API_VERSION"
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding

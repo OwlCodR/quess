@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -18,6 +17,8 @@ import com.hbb20.CountryCodePicker
 import com.votenote.net.R
 import com.votenote.net.databinding.FragmentLoginBinding
 import com.votenote.net.log
+import com.votenote.net.retrofit.common.Common
+import com.votenote.net.retrofit.service.RetrofitServices
 import com.votenote.net.ui.auth.AuthActivity
 import com.votenote.net.ui.auth.AuthViewModel
 
@@ -39,6 +40,8 @@ class LoginFragment : Fragment() {
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
 
+    private lateinit var retrofitService: RetrofitServices
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -58,6 +61,8 @@ class LoginFragment : Fragment() {
             supportFragmentManager?.
             findFragmentById(R.id.nav_host_fragment_auth) as NavHostFragment
         navController = navHostFragment.navController
+
+        retrofitService = Common.retrofitService
 
         authActivity = activity as AuthActivity
         binding.authActivity = authActivity
@@ -79,7 +84,7 @@ class LoginFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                authActivity.checkPasswordValid(inputPassword)
+                authActivity.checkPasswordValidity(inputPassword)
             }
         })
 
@@ -91,20 +96,17 @@ class LoginFragment : Fragment() {
     }
 
     fun onLogin() {
-//        val password: String = inputPassword.editText?.text.toString()
-//        val phone: String = inputPhone.editText?.text.toString()
+        val password: String = inputPassword.editText?.text.toString()
+        val phone: String = countryCodePicker.fullNumberWithPlus.trim()
+
         val isPhoneValid = countryCodePicker.isValidFullNumber
-        val isPasswordValid = authActivity.checkPasswordValid(inputPassword)
+        val isPasswordValid = authActivity.checkPasswordValidity(inputPassword)
 
         if (isPasswordValid && isPhoneValid) {
-            Toast.makeText(context, "YOU ARE LOGGED IN NOW", Toast.LENGTH_SHORT).show()
-            // @TODO Retrofit login request
+            // Toast.makeText(context, "YOU ARE LOGGED IN NOW", Toast.LENGTH_SHORT).show()
+            retrofitService
         } else {
-            Snackbar.make(
-                requireView(),
-                "Login error.\nCheck the correctness of the entered data.",
-                Snackbar.LENGTH_SHORT)
-                .show()
+            showSnackbar("Login error.\nCheck the correctness of the entered data.")
 
             if (!isPasswordValid) {
                 inputPassword.isErrorEnabled = true
@@ -115,6 +117,10 @@ class LoginFragment : Fragment() {
                 inputPhone.error = "Wrong phone number"
             }
         }
+    }
+
+    private fun showSnackbar(s: String) {
+        Snackbar.make(requireView(), s, Snackbar.LENGTH_LONG).show()
     }
 }
 
