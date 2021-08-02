@@ -1,6 +1,7 @@
 package com.votenote.net.ui.auth.register
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -12,6 +13,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -171,11 +173,23 @@ class RegisterFragment : Fragment() {
 
         builder.setTitle("Invite code")
         builder.setView(dialogLayout)
-        builder.setPositiveButton("OK") { dialogInterface, i ->
+        builder.setPositiveButton("Ok") { dialogInterface, i ->
             inviteCode = inviteCodeLayout.editText?.text.toString()
         }
-        builder.show()
+        builder.setNegativeButton("Cancel") { dialogInterface, i ->
+            dialogInterface.cancel()
+        }
 
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+
+        val positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        val negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+
+        positiveButton.setTextColor(resources.getColor(R.color.orange))
+        negativeButton.setTextColor(resources.getColor(R.color.light_gray))
+
+        // @TODO getColor() is deprecated
     }
 
     private fun showProgressBar() {
