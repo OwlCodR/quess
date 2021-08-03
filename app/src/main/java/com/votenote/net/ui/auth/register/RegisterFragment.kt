@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
 import com.votenote.net.databinding.FragmentRegisterBinding
@@ -40,7 +41,6 @@ import com.votenote.net.BuildConfig
 import com.votenote.net.MainActivity
 import com.votenote.net.R
 import com.votenote.net.log
-import java.util.*
 
 class RegisterFragment : Fragment() {
 
@@ -178,12 +178,14 @@ class RegisterFragment : Fragment() {
         val inflater = layoutInflater
 
         val dialogLayout = inflater.inflate(R.layout.dialog_invite_code, null)
-        val inviteCodeLayout = dialogLayout.findViewById<TextInputLayout>(R.id.textInputLayoutInviteCode)
+        val inviteCodeLayout: TextInputLayout = dialogLayout.findViewById(R.id.textInputLayoutInviteCode)
+        val inviteCodeEditText: TextInputEditText = inviteCodeLayout.editText as TextInputEditText
 
         builder.setTitle("Invite code")
         builder.setView(dialogLayout)
         builder.setPositiveButton("Ok") { dialogInterface, i ->
-            inviteCode = inviteCodeLayout.editText?.text.toString()
+            inviteCode = inviteCodeEditText.text.toString()
+            log(requireActivity(), "inviteCode = $inviteCode")
         }
         builder.setNegativeButton("Cancel") { dialogInterface, i ->
             dialogInterface.cancel()
@@ -195,10 +197,49 @@ class RegisterFragment : Fragment() {
         val positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
         val negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
 
-        positiveButton.setTextColor(resources.getColor(R.color.orange))
+        // @TODO getColor() is deprecated
+        positiveButton.setTextColor(resources.getColor(R.color.dark_gray))
         negativeButton.setTextColor(resources.getColor(R.color.light_gray))
 
-        // @TODO getColor() is deprecated
+        positiveButton.isEnabled = false
+
+        if (inviteCode != null) {
+            log(requireActivity(), "We already have inviteCode = $inviteCode")
+            inviteCodeEditText.text = Editable.Factory.getInstance().newEditable(inviteCode)
+            positiveButton.setTextColor(resources.getColor(R.color.orange))
+        }
+
+        inviteCodeLayout.editText?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val code: String = s.toString()
+                if (Regex("[a-z]").containsMatchIn(code)) {
+                    val uppercase = code.uppercase()
+                    inviteCodeEditText.text = Editable.Factory.getInstance().newEditable(uppercase)
+                    inviteCodeEditText.setSelection(code.length)
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s != null) {
+                    if (s.length == 16) {
+                        positiveButton.setTextColor(resources.getColor(R.color.orange))
+                        positiveButton.isEnabled = true
+                        inviteCodeLayout.hint = "Invite code"
+
+                    }
+                    if (Regex("[^A-Za-z0-9]").containsMatchIn(s) ||
+                        Regex("\\s").containsMatchIn(s)) {
+                        positiveButton.setTextColor(resources.getColor(R.color.dark_gray))
+                        inviteCodeLayout.hint = "Invite code is incorrect"
+                    }
+                    if (s.length < 16) {
+                        positiveButton.setTextColor(resources.getColor(R.color.dark_gray))
+                        inviteCodeLayout.hint = "Invite code is too short"
+                    }
+                }
+            }
+        })
     }
 
     private fun showProgressBar() {
@@ -227,7 +268,13 @@ class RegisterFragment : Fragment() {
                 SharedPreferencesTags.API_VERSION.name,
                     BuildConfig.DEFAULT_API_VERSION)
 
-            val newUser = User(password=password, phone=phone, tag=tag, meta=Meta(apiVersion))
+            val newUser = User(
+                password=password,
+                phone=phone,
+                tag=tag,
+                inviteCode=inviteCode,
+                meta=Meta(apiVersion)
+            )
 
             retrofitService
                 .register(newUser)
@@ -247,23 +294,19 @@ class RegisterFragment : Fragment() {
 
             if (!arePasswordsEqual()) {
                 inputRepeatPassword.isErrorEnabled = true
-                inputRepeatPassword.error = "Wrong password"
                 inputRepeatPassword.hint = "Password mismatch"
             }
             if (!isPasswordValid) {
                 inputPassword.isErrorEnabled = true
-                inputPassword.error = "Wrong password"
             }
             if (!isPhoneValid) {
                 inputPhone.isErrorEnabled = true
-                inputPhone.error = "Wrong phone number"
             }
             if (!isTagValid) {
                 inputTag.isErrorEnabled = true
-                inputTag.error = "Wrong tag"
             }
             if (inviteCode == null) {
-                showSnackbar("Error!\nAn invite code is required.")
+                showSnackbar("Error!\nRequires an invite code.")
             }
         }
     }
@@ -307,7 +350,7 @@ class RegisterFragment : Fragment() {
                 showSnackbar("An unknown error has occurred!")
             } else {
                 val moshi = Moshi.Builder().build()
-                val jsonAdapter: JsonAdapter<Answer> = moshi.adapter<Answer>(Answer::class.java)
+                val jsonAdapter: JsonAdapter<Answer> = moshi.adapter(Answer::class.java)
 
                 val answer: Answer? = jsonAdapter.fromJson(errorBodyString)
                 val errorCode = answer?.errorCode
@@ -322,6 +365,9 @@ class RegisterFragment : Fragment() {
                         inputTag.isErrorEnabled = true
                         inputTag.error = "Phone number is not unique"
                         inputTag.hint = "This tag already exists"
+                    }
+                    ErrorCodes.BAD_INVITE_CODE.name -> {
+                        showSnackbar("Incorrect invite code!")
                     }
                 }
 

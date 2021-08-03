@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -9,16 +10,20 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:textColorHint="@color/gray"
-        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput">
+        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditTextInviteCode"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="sans-serif-light"
             android:hint="@string/invite_code"
-            android:inputType="text"
+            android:inputType="text|textCapCharacters"
             android:maxLength="16"
             android:textSize="18sp" />
     </com.google.android.material.textfield.TextInputLayout>
