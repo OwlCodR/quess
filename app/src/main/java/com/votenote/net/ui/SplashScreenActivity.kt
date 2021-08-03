@@ -84,7 +84,7 @@ class SplashScreenActivity : AppCompatActivity() {
             if (errorCode == "0000") {
                 sharedPreference
                     .edit()
-                    .putString(SharedPreferencesTags.API_VERSION.name, apiVersion)
+                    .putString(SharedPreferencesTags.API_VERSION.tag, apiVersion)
                     .apply()
             } else {
                 log(this, "An error[$errorCode] has occurred!\n")

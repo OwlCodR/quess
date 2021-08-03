@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/drawable/ic_menu_search_24.xml" value="0.24027777777777778" />
+        <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/drawable/ic_outline_content_paste_24.xml" value="0.12268518518518519" />
         <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/drawable/ic_password_24.xml" value="0.18333333333333332" />
+        <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/drawable/ic_phone_24.xml" value="0.12268518518518519" />
         <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/layout/activity_main.xml" value="0.22592592592592592" />
         <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/layout/activity_splash_screen.xml" value="0.22592592592592592" />
         <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/layout/dialog_invite_code.xml" value="0.264" />

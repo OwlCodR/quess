@@ -174,7 +174,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun showInviteCodeDialog() {
-        val builder = AlertDialog.Builder(requireActivity())
+        val builder = AlertDialog.Builder(requireActivity(), R.style.RoundedOverlayAlertDialog)
         val inflater = layoutInflater
 
         val dialogLayout = inflater.inflate(R.layout.dialog_invite_code, null)
@@ -206,6 +206,8 @@ class RegisterFragment : Fragment() {
         if (inviteCode != null) {
             log(requireActivity(), "We already have inviteCode = $inviteCode")
             inviteCodeEditText.text = Editable.Factory.getInstance().newEditable(inviteCode)
+
+            positiveButton.isEnabled = true
             positiveButton.setTextColor(resources.getColor(R.color.orange))
         }
 
@@ -232,10 +234,14 @@ class RegisterFragment : Fragment() {
                         Regex("\\s").containsMatchIn(s)) {
                         positiveButton.setTextColor(resources.getColor(R.color.dark_gray))
                         inviteCodeLayout.hint = "Invite code is incorrect"
+
+                        positiveButton.isEnabled = false
                     }
                     if (s.length < 16) {
                         positiveButton.setTextColor(resources.getColor(R.color.dark_gray))
                         inviteCodeLayout.hint = "Invite code is too short"
+
+                        positiveButton.isEnabled = false
                     }
                 }
             }
@@ -265,7 +271,7 @@ class RegisterFragment : Fragment() {
             showProgressBar()
 
             val apiVersion = sharedPreference.getString(
-                SharedPreferencesTags.API_VERSION.name,
+                SharedPreferencesTags.API_VERSION.tag,
                     BuildConfig.DEFAULT_API_VERSION)
 
             val newUser = User(
@@ -356,23 +362,25 @@ class RegisterFragment : Fragment() {
                 val errorCode = answer?.errorCode
 
                 when (errorCode) {
-                    ErrorCodes.PHONE_EXISTS.name -> {
+                    ErrorCodes.PHONE_EXISTS.code -> {
                         inputPhone.isErrorEnabled = true
                         inputPhone.error = "Phone number is not unique"
-                        inputPhone.hint = "This phone already exists"
+                        inputPhone.hint = "Phone already exists"
                     }
-                    ErrorCodes.TAG_EXISTS.name -> {
+                    ErrorCodes.TAG_EXISTS.code -> {
                         inputTag.isErrorEnabled = true
-                        inputTag.error = "Phone number is not unique"
-                        inputTag.hint = "This tag already exists"
+                        inputTag.error = "Tag is not unique"
+                        inputTag.hint = "Tag already exists"
                     }
-                    ErrorCodes.BAD_INVITE_CODE.name -> {
+                    ErrorCodes.BAD_INVITE_CODE.code -> {
+                        log(context, "Incorrect invite code!")
                         showSnackbar("Incorrect invite code!")
                     }
+                    else -> {
+                        log(context, "An error[$errorCode] has occurred!")
+                        showSnackbar("An error[$errorCode] has occurred!")
+                    }
                 }
-
-                log(context, "An error[$errorCode] has occurred!")
-                showSnackbar("An error[$errorCode] has occurred!")
             }
         }
 

@@ -10,12 +10,9 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_margin="20dp"
         android:textColorHint="@color/gray"
-        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
-        app:errorEnabled="true">
+        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textInputEditTextInviteCode"
@@ -26,6 +23,7 @@
             android:inputType="text|textCapCharacters"
             android:maxLength="16"
             android:textSize="18sp" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

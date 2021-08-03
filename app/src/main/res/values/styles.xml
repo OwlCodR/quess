@@ -39,4 +39,10 @@
         <item name="android:focusable">true</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <!-- Alert Dialog -->
+    <style name="RoundedOverlayAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="dialogCornerRadius">16dp</item>
+        <item name="fontFamily">@font/proxima_nova_regular</item>
+    </style>
 </resources>

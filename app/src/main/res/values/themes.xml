@@ -11,7 +11,8 @@
         <item name="colorOnSecondary">@color/gray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <!-- Alert Dialog -->
+        <item name="alertDialogStyle">@style/RoundedOverlayAlertDialog</item>
     </style>
 
     <style name="Theme.VoteNote.NoActionBar">
