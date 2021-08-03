@@ -13,16 +13,13 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
-import com.votenote.net.*
 import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.enums.ErrorCodes
 import com.votenote.net.enums.SharedPreferencesTags
@@ -39,7 +36,11 @@ import retrofit2.Response
 import com.squareup.moshi.JsonAdapter
 
 import com.squareup.moshi.Moshi
-
+import com.votenote.net.BuildConfig
+import com.votenote.net.MainActivity
+import com.votenote.net.R
+import com.votenote.net.log
+import java.util.*
 
 class RegisterFragment : Fragment() {
 
@@ -155,7 +156,15 @@ class RegisterFragment : Fragment() {
         })
 
         inputTag.editText?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                val tag: String = s.toString()
+                val tagEditText: EditText = inputTag.editText!!
+                if (Regex("[A-Z]").containsMatchIn(tag)) {
+                    val lowercase: String = tag.lowercase()
+                    tagEditText.text = Editable.Factory.getInstance().newEditable(lowercase)
+                    tagEditText.setSelection(tag.length)
+                }
+            }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -295,6 +304,7 @@ class RegisterFragment : Fragment() {
 
             if (isHtmlPage) {
                 log(context, "An error[SERVER_ERROR] has occurred!\n")
+                showSnackbar("An unknown error has occurred!")
             } else {
                 val moshi = Moshi.Builder().build()
                 val jsonAdapter: JsonAdapter<Answer> = moshi.adapter<Answer>(Answer::class.java)
@@ -343,8 +353,8 @@ class RegisterFragment : Fragment() {
             Regex("\\s").containsMatchIn(tag) -> {
                 errorHint = "Tag must not contain spaces"
             }
-            Regex("[^a-zA-Z0-9_]").containsMatchIn(tag) -> {
-                log(context, Regex("[^a-zA-Z0-9_]").containsMatchIn(tag).toString())
+            Regex("[^a-z0-9_]").containsMatchIn(tag) -> {
+                log(context, Regex("[^a-z0-9_]").containsMatchIn(tag).toString())
                 errorHint = "Only english letters, digits or '_' are allowed"
             }
             else -> {
