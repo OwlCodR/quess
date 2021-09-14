@@ -6,7 +6,7 @@ import com.votenote.net.retrofit.service.RetrofitServices
 
 
 object Common {
-    private val BASE_URL = BuildConfig.API_URL
+    private const val BASE_URL = BuildConfig.API_URL
 
     val retrofitService: RetrofitServices
         get() = RetrofitClient.getClient(BASE_URL).create(RetrofitServices::class.java)

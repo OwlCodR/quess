@@ -74,30 +74,32 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingBottom="20dp">
 
                     <com.hbb20.CountryCodePicker
                         android:id="@+id/countryCodePicker"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        app:ccp_defaultNameCode="RU"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="top"
                         app:ccp_autoDetectLanguage="true"
-                        app:ccp_hintExampleNumber="true"
-                        android:gravity="center" />
+                        app:ccp_defaultNameCode="RU"
+                        app:ccp_hintExampleNumber="true" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputLayoutPhone"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:textColorHint="@color/gray"
                         android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
-                        app:errorEnabled="true">
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editTextPhone"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-light"
                             android:inputType="numberSigned|phone"
                             android:textColorHint="@color/gray"
@@ -110,18 +112,17 @@
                     android:id="@+id/textInputLayoutPassword"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"
+                    android:layout_height="wrap_content"
                     android:textColorHint="@color/gray"
                     android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
-                    app:errorEnabled="true"
+                    app:errorIconDrawable="@null"
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="@color/gray"
                     app:startIconDrawable="@drawable/ic_password_24">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
                         android:hint="@string/hint_password"
                         android:inputType="textPassword"

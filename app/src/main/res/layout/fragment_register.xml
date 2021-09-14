@@ -82,15 +82,15 @@
                         android:id="@+id/textInputLayoutTag"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:textColorHint="@color/gray"
                         android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
-                        app:errorEnabled="true"
-                        app:startIconDrawable="@drawable/ic_menu_profile_28">
+                        app:errorIconDrawable="@null"
+                        app:startIconDrawable="@drawable/ic_menu_profile_24">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-light"
                             android:hint="@string/tag"
                             android:inputType="text"
@@ -106,7 +106,8 @@
                         <com.hbb20.CountryCodePicker
                             android:id="@+id/countryCodePicker"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:gravity="center"
                             app:ccp_autoDetectLanguage="true"
                             app:ccp_defaultNameCode="RU"
@@ -116,10 +117,10 @@
                             android:id="@+id/textInputLayoutPhone"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:textColorHint="@color/gray"
                             android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
-                            app:errorEnabled="true">
+                            app:errorIconDrawable="@null">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/editTextPhone"
@@ -137,17 +138,16 @@
                         android:id="@+id/textInputLayoutPassword"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
-                        app:errorEnabled="true"
                         app:endIconMode="password_toggle"
                         app:errorIconDrawable="@null"
                         app:startIconDrawable="@drawable/ic_password_24">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-light"
                             android:hint="@string/hint_password"
                             android:inputType="textPassword"
@@ -158,17 +158,16 @@
                         android:id="@+id/textInputLayoutRepeatPassword"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                         app:endIconMode="password_toggle"
                         app:errorIconDrawable="@null"
-                        app:errorEnabled="true"
                         app:startIconDrawable="@drawable/ic_password_24">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:hint="Repeat password"
                             android:inputType="textPassword"
                             android:textSize="18sp" />

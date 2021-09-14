@@ -1,8 +1,7 @@
 package com.votenote.net.retrofit.service
 
-import com.votenote.net.model.Answer
-import com.votenote.net.model.Meta
-import com.votenote.net.model.User
+import com.votenote.net.retrofit.model.Answer
+import com.votenote.net.retrofit.model.User
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

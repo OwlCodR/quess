@@ -14,10 +14,20 @@
         <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/layout/fragment_register.xml" value="0.4" />
         <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/layout/test_fragment.xml" value="0.22592592592592592" />
         <entry key="..\:/Maxim/Projects/vote-note/app/src/main/res/menu/main.xml" value="0.16342592592592592" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/drawable-v24/ic_menu_polls_24.xml" value="0.2564814814814815" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/drawable/ic_menu_profile_28.xml" value="0.26666666666666666" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/drawable/ic_menu_search_24.xml" value="0.26666666666666666" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/drawable/ic_outline_chats_24.xml" value="0.26666666666666666" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/drawable/ic_phone_24.xml" value="0.26666666666666666" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/drawable/ic_search_24.xml" value="0.26666666666666666" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/layout/fragment_login.xml" value="0.5" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/layout/fragment_profile.xml" value="0.36666666666666664" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/layout/fragment_register.xml" value="0.5" />
+        <entry key="..\:/projects/vote-note/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2564814814814815" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

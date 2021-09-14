@@ -39,7 +39,7 @@
     </fragment>
     <activity
         android:id="@+id/nav_main"
-        android:name="com.votenote.net.MainActivity"
+        android:name="com.votenote.net.MainActivityOld"
         android:label="@string/menu_auth"
         tools:layout="@layout/activity_main" />
 </navigation>

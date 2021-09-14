@@ -24,9 +24,9 @@ import com.hbb20.CountryCodePicker
 import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.enums.ErrorCodes
 import com.votenote.net.enums.SharedPreferencesTags
-import com.votenote.net.model.Answer
-import com.votenote.net.model.Meta
-import com.votenote.net.model.User
+import com.votenote.net.retrofit.model.Answer
+import com.votenote.net.retrofit.model.Meta
+import com.votenote.net.retrofit.model.User
 import com.votenote.net.retrofit.common.Common
 import com.votenote.net.retrofit.service.RetrofitServices
 import com.votenote.net.ui.auth.AuthActivity
@@ -38,9 +38,8 @@ import com.squareup.moshi.JsonAdapter
 
 import com.squareup.moshi.Moshi
 import com.votenote.net.BuildConfig
-import com.votenote.net.MainActivity
+import com.votenote.net.MainActivityOld
 import com.votenote.net.R
-import com.votenote.net.log
 
 class RegisterFragment : Fragment() {
 
@@ -72,10 +71,10 @@ class RegisterFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        log(context, "onCreateView()")
+        //log(context, "onCreateView()")
 
         sharedPreference = requireActivity().getSharedPreferences(
-                MainActivity().APP_PREFERENCE,
+                MainActivityOld().APP_PREFERENCE,
                 Context.MODE_PRIVATE
             )
 
@@ -108,7 +107,7 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        log(context, "onViewCreated()")
+        //log(context, "onViewCreated()")
 
         textViewSignIn.setOnClickListener {
             navController.popBackStack()
@@ -160,7 +159,7 @@ class RegisterFragment : Fragment() {
                 val tag: String = s.toString()
                 val tagEditText: EditText = inputTag.editText!!
                 if (Regex("[A-Z]").containsMatchIn(tag)) {
-                    val lowercase: String = tag.lowercase()
+                    val lowercase: String = tag.toLowerCase()
                     tagEditText.text = Editable.Factory.getInstance().newEditable(lowercase)
                     tagEditText.setSelection(tag.length)
                 }
@@ -185,7 +184,7 @@ class RegisterFragment : Fragment() {
         builder.setView(dialogLayout)
         builder.setPositiveButton("Ok") { dialogInterface, i ->
             inviteCode = inviteCodeEditText.text.toString()
-            log(requireActivity(), "inviteCode = $inviteCode")
+            //log(requireActivity(), "inviteCode = $inviteCode")
         }
         builder.setNegativeButton("Cancel") { dialogInterface, i ->
             dialogInterface.cancel()
@@ -204,7 +203,7 @@ class RegisterFragment : Fragment() {
         positiveButton.isEnabled = false
 
         if (inviteCode != null) {
-            log(requireActivity(), "We already have inviteCode = $inviteCode")
+            //log(requireActivity(), "We already have inviteCode = $inviteCode")
             inviteCodeEditText.text = Editable.Factory.getInstance().newEditable(inviteCode)
 
             positiveButton.isEnabled = true
@@ -215,7 +214,7 @@ class RegisterFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 val code: String = s.toString()
                 if (Regex("[a-z]").containsMatchIn(code)) {
-                    val uppercase = code.uppercase()
+                    val uppercase = code.toUpperCase()
                     inviteCodeEditText.text = Editable.Factory.getInstance().newEditable(uppercase)
                     inviteCodeEditText.setSelection(code.length)
                 }
@@ -223,26 +222,27 @@ class RegisterFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s != null) {
-                    if (s.length == 16) {
-                        positiveButton.setTextColor(resources.getColor(R.color.orange))
-                        positiveButton.isEnabled = true
-                        inviteCodeLayout.hint = "Invite code"
+                if (s != null && s.length != 16) {
+                    inviteCodeLayout.isErrorEnabled = true
 
-                    }
                     if (Regex("[^A-Za-z0-9]").containsMatchIn(s) ||
                         Regex("\\s").containsMatchIn(s)) {
                         positiveButton.setTextColor(resources.getColor(R.color.dark_gray))
-                        inviteCodeLayout.hint = "Invite code is incorrect"
-
                         positiveButton.isEnabled = false
+
+                        inviteCodeLayout.error = "Invite code is incorrect"
                     }
                     if (s.length < 16) {
                         positiveButton.setTextColor(resources.getColor(R.color.dark_gray))
-                        inviteCodeLayout.hint = "Invite code is too short"
-
                         positiveButton.isEnabled = false
+
+                        inviteCodeLayout.error = "Invite code is too short"
                     }
+                } else {
+                    positiveButton.setTextColor(resources.getColor(R.color.orange))
+                    positiveButton.isEnabled = true
+
+                    inviteCodeLayout.isErrorEnabled = false
                 }
             }
         })
@@ -300,13 +300,14 @@ class RegisterFragment : Fragment() {
 
             if (!arePasswordsEqual()) {
                 inputRepeatPassword.isErrorEnabled = true
-                inputRepeatPassword.hint = "Password mismatch"
+                inputRepeatPassword.error = "Password mismatch"
             }
             if (!isPasswordValid) {
                 inputPassword.isErrorEnabled = true
             }
             if (!isPhoneValid) {
                 inputPhone.isErrorEnabled = true
+                inputPhone.error = "Wrong phone number"
             }
             if (!isTagValid) {
                 inputTag.isErrorEnabled = true
@@ -318,7 +319,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun onFailure(t: Throwable) {
-        log(context, t.message.toString())
+        //log(context, t.message.toString())
 
         showSnackbar("An error has occurred!\nCheck internet connection or try later")
 
@@ -326,14 +327,14 @@ class RegisterFragment : Fragment() {
     }
 
     private fun onResponse(response: Response<Answer>) {
-        log(context, "response.isSuccessful = " + response.isSuccessful)
+        //log(context, "response.isSuccessful = " + response.isSuccessful)
 
         if (response.isSuccessful) {
             val body = response.body()
             val code: String? = body?.errorCode
 
             if (code == "0000") {
-                log(context, "User has been registered")
+                //log(context, "User has been registered")
 
                 sharedPreference
                     .edit()
@@ -352,7 +353,7 @@ class RegisterFragment : Fragment() {
             val isHtmlPage = errorBodyString.contains("HTML")
 
             if (isHtmlPage) {
-                log(context, "An error[SERVER_ERROR] has occurred!\n")
+                //log(context, "An error[SERVER_ERROR] has occurred!\n")
                 showSnackbar("An unknown error has occurred!")
             } else {
                 val moshi = Moshi.Builder().build()
@@ -364,20 +365,18 @@ class RegisterFragment : Fragment() {
                 when (errorCode) {
                     ErrorCodes.PHONE_EXISTS.code -> {
                         inputPhone.isErrorEnabled = true
-                        inputPhone.error = "Phone number is not unique"
-                        inputPhone.hint = "Phone already exists"
+                        inputPhone.error = "Phone already exists"
                     }
                     ErrorCodes.TAG_EXISTS.code -> {
                         inputTag.isErrorEnabled = true
-                        inputTag.error = "Tag is not unique"
-                        inputTag.hint = "Tag already exists"
+                        inputTag.error = "Tag already exists"
                     }
                     ErrorCodes.BAD_INVITE_CODE.code -> {
-                        log(context, "Incorrect invite code!")
+                        //log(context, "Incorrect invite code!")
                         showSnackbar("Incorrect invite code!")
                     }
                     else -> {
-                        log(context, "An error[$errorCode] has occurred!")
+                        //log(context, "An error[$errorCode] has occurred!")
                         showSnackbar("An error[$errorCode] has occurred!")
                     }
                 }
@@ -391,36 +390,38 @@ class RegisterFragment : Fragment() {
         val password = inputPassword.editText?.text.toString()
         val repeatPassword = inputRepeatPassword.editText?.text.toString()
 
-        return password == repeatPassword
+        return password.isNotEmpty() && password == repeatPassword
     }
 
     private fun checkTagValid(): Boolean {
         val tag: String = inputTag.editText?.text.toString()
-        val errorHint: String
+        val error: String
+
+        inputTag.isErrorEnabled = true
+
         when {
             tag.length < 6 -> {
-                errorHint = "Tag is too short"
+                error = "Tag is too short"
             }
             tag.length > 16 -> {
-                errorHint = "Tag is too long"
+                error = "Tag is too long"
             }
             Regex("\\s").containsMatchIn(tag) -> {
-                errorHint = "Tag must not contain spaces"
+                error = "Tag must not contain spaces"
             }
             Regex("[^a-z0-9_]").containsMatchIn(tag) -> {
-                log(context, Regex("[^a-z0-9_]").containsMatchIn(tag).toString())
-                errorHint = "Only english letters, digits or '_' are allowed"
+                //log(context, Regex("[^a-z0-9_]").containsMatchIn(tag).toString())
+                error = "Only english letters, digits or '_' are allowed"
             }
             else -> {
-                log(context, "Tag is valid")
+                //log(context, "Tag is valid")
                 inputTag.isErrorEnabled = false
-                inputTag.hint = "Tag"
                 return true
             }
         }
 
-        inputTag.hint = errorHint
-        log(context, "Tag errorHint = $errorHint")
+        inputTag.error = error
+        //log(context, "Tag error = $error")
         return false
     }
 

@@ -1,5 +1,6 @@
 package com.votenote.net.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -10,19 +11,18 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
 import com.votenote.net.MainActivity
+import com.votenote.net.MainActivityOld
 import com.votenote.net.R
 import com.votenote.net.enums.SharedPreferencesTags
-import com.votenote.net.log
-import com.votenote.net.model.Answer
+import com.votenote.net.retrofit.model.Answer
 import com.votenote.net.retrofit.common.Common
 import com.votenote.net.retrofit.service.RetrofitServices
-import com.votenote.net.ui.auth.AuthActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
     private val SPLASH_SCREEN_TIME: Long = 500 // ms
 
@@ -40,7 +40,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         view = findViewById(R.id.splash_screen_container)
 
-        sharedPreference = getSharedPreferences(MainActivity().APP_PREFERENCE, Context.MODE_PRIVATE)
+        sharedPreference = getSharedPreferences(MainActivityOld().APP_PREFERENCE, Context.MODE_PRIVATE)
         retrofitService = Common.retrofitService
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -67,19 +67,19 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private fun onFailure(t: Throwable) {
-        log(this, t.message.toString())
+        //log(this, t.message.toString())
     }
 
     private fun onResponse(response: Response<Answer>) {
-        log(this, "response.isSuccessful = " + response.isSuccessful)
-        log(this, "errorBody() = ${response.errorBody()?.string()}")
+        //log(this, "response.isSuccessful = " + response.isSuccessful)
+        //log(this, "errorBody() = ${response.errorBody()?.string()}")
 
         if (response.isSuccessful) {
             val body = response.body()
             val errorCode = body?.errorCode
             val apiVersion = body?.meta?.version
 
-            log(this, "apiVersion = $apiVersion")
+            //log(this, "apiVersion = $apiVersion")
 
             if (errorCode == "0000") {
                 sharedPreference
@@ -87,7 +87,7 @@ class SplashScreenActivity : AppCompatActivity() {
                     .putString(SharedPreferencesTags.API_VERSION.tag, apiVersion)
                     .apply()
             } else {
-                log(this, "An error[$errorCode] has occurred!\n")
+                //log(this, "An error[$errorCode] has occurred!\n")
             }
         }
     }
@@ -96,8 +96,8 @@ class SplashScreenActivity : AppCompatActivity() {
         val isFirst = sharedPreference.getBoolean("isFirst", true)
         val loggedIn = sharedPreference.getBoolean("loggedIn", false)
 
-        log(this, "isFirst = $isFirst")
-        log(this, "loggedIn = $loggedIn")
+        //log(this, "isFirst = $isFirst")
+        //log(this, "loggedIn = $loggedIn")
 
         if (isFirst || !loggedIn) {
             sharedPreference
@@ -105,7 +105,8 @@ class SplashScreenActivity : AppCompatActivity() {
                 .putBoolean("isFirst", false)
                 .apply()
 
-            startActivity(AuthActivity::class.java)
+            // @TODO Change to AuthActivity
+            startActivity(MainActivity::class.java)
         } else {
             startActivity(MainActivity::class.java)
         }

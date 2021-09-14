@@ -16,7 +16,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
 import com.votenote.net.R
 import com.votenote.net.databinding.FragmentLoginBinding
-import com.votenote.net.log
 import com.votenote.net.retrofit.common.Common
 import com.votenote.net.retrofit.service.RetrofitServices
 import com.votenote.net.ui.auth.AuthActivity
@@ -45,7 +44,7 @@ class LoginFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        log(context, "onCreateView()")
+        //log(context, "onCreateView()")
 
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         binding.handler = this
@@ -72,7 +71,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        log(context, "onViewCreated()")
+        //log(context, "onViewCreated()")
 
         textViewSignUp.setOnClickListener {
             navController.navigate(R.id.action_nav_login_to_nav_register)
@@ -90,8 +89,10 @@ class LoginFragment : Fragment() {
 
         countryCodePicker.registerCarrierNumberEditText(binding.editTextPhone)
         countryCodePicker.setPhoneNumberValidityChangeListener {
-            if (countryCodePicker.isValidFullNumber)
-                inputPhone.isErrorEnabled = false
+            //log(context, "countryCodePicker.isValidFullNumber = $countryCodePicker.isValidFullNumber")
+            if (countryCodePicker.isValidFullNumber) {
+                setPhoneError(false)
+            }
         }
     }
 
@@ -104,19 +105,20 @@ class LoginFragment : Fragment() {
 
         if (isPasswordValid && isPhoneValid) {
             // Toast.makeText(context, "YOU ARE LOGGED IN NOW", Toast.LENGTH_SHORT).show()
-            retrofitService
+            // retrofitService
         } else {
             showSnackbar("Login error.\nCheck the correctness of the entered data.")
 
-            if (!isPasswordValid) {
-                inputPassword.isErrorEnabled = true
-                inputPassword.error = "Wrong password"
-            }
             if (!isPhoneValid) {
-                inputPhone.isErrorEnabled = true
-                inputPhone.error = "Wrong phone number"
+                setPhoneError(true)
             }
         }
+    }
+
+    private fun setPhoneError(isErrorEnabled: Boolean) {
+        inputPhone.isErrorEnabled = isErrorEnabled
+        if (isErrorEnabled)
+            inputPhone.error = "Wrong phone number"
     }
 
     private fun showSnackbar(s: String) {
