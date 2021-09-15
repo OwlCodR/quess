@@ -1,6 +1,5 @@
 package com.votenote.net.ui.auth
 
-import android.content.ClipData.Item
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

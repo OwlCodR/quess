@@ -15,8 +15,8 @@ import com.votenote.net.MainActivity
 import com.votenote.net.MainActivityOld
 import com.votenote.net.R
 import com.votenote.net.enums.SharedPreferencesTags
-import com.votenote.net.retrofit.model.Answer
 import com.votenote.net.retrofit.common.Common
+import com.votenote.net.retrofit.model.Answer
 import com.votenote.net.retrofit.service.RetrofitServices
 import retrofit2.Call
 import retrofit2.Callback

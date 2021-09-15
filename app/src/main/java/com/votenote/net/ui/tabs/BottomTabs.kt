@@ -1,7 +1,5 @@
 package com.votenote.net.ui.tabs
 
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.votenote.net.R
 
 enum class BottomTabs(val tab: TabModel) {

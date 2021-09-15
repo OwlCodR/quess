@@ -21,25 +21,24 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.votenote.net.BuildConfig
+import com.votenote.net.MainActivityOld
+import com.votenote.net.R
 import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.enums.ErrorCodes
 import com.votenote.net.enums.SharedPreferencesTags
+import com.votenote.net.retrofit.common.Common
 import com.votenote.net.retrofit.model.Answer
 import com.votenote.net.retrofit.model.Meta
 import com.votenote.net.retrofit.model.User
-import com.votenote.net.retrofit.common.Common
 import com.votenote.net.retrofit.service.RetrofitServices
 import com.votenote.net.ui.auth.AuthActivity
 import com.votenote.net.ui.auth.AuthViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.squareup.moshi.JsonAdapter
-
-import com.squareup.moshi.Moshi
-import com.votenote.net.BuildConfig
-import com.votenote.net.MainActivityOld
-import com.votenote.net.R
 
 class RegisterFragment : Fragment() {
 

@@ -4,11 +4,6 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
-    <style name="Widget.Theme.VoteNote.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
-
     <style name="Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="colorControlActivated">@color/gray</item>
         <item name="boxStrokeColor">@color/input_item</item>
