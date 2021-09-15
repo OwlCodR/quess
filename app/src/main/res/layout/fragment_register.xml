@@ -86,7 +86,7 @@
                         android:textColorHint="@color/gray"
                         android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.CustomInput"
                         app:errorIconDrawable="@null"
-                        app:startIconDrawable="@drawable/ic_menu_profile_24">
+                        app:startIconDrawable="@drawable/ic_menu_profile_28">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"

@@ -17,7 +17,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-
         Properties properties = new Properties()
         if (project.rootProject.file("local.properties").canRead()) {
             properties.load(project.rootProject.file("local.properties").newDataInputStream())

@@ -6,11 +6,11 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_profile_24"
+            android:icon="@drawable/ic_menu_profile_28"
             android:title="@string/menu_profile" />
         <item
             android:id="@+id/nav_search"
-            android:icon="@drawable/ic_search_24"
+            android:icon="@drawable/ic_search_28"
             android:title="@string/menu_search" />
         <item
             android:id="@+id/nav_polls"
@@ -18,7 +18,7 @@
             android:title="@string/menu_polls" />
         <item
             android:id="@+id/nav_notifications"
-            android:icon="@drawable/ic_menu_notifications_24"
+            android:icon="@drawable/ic_notifications_28"
             android:title="@string/menu_notifications" />
     </group>
 </menu>
