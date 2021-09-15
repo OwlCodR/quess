@@ -24,7 +24,7 @@ import com.hbb20.CountryCodePicker
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.votenote.net.BuildConfig
-import com.votenote.net.MainActivityOld
+import com.votenote.net.MainActivity
 import com.votenote.net.R
 import com.votenote.net.databinding.FragmentRegisterBinding
 import com.votenote.net.enums.ErrorCodes
@@ -73,7 +73,7 @@ class RegisterFragment : Fragment() {
         //log(context, "onCreateView()")
 
         sharedPreference = requireActivity().getSharedPreferences(
-                MainActivityOld().APP_PREFERENCE,
+                MainActivity.APP_PREFERENCE,
                 Context.MODE_PRIVATE
             )
 

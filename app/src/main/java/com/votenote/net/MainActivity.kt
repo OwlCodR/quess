@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
+        const val APP_PREFERENCE = "APP_PREFERENCE"
         const val DEBUG_TAG = "DEBUG"
     }
 }

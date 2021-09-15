@@ -12,7 +12,6 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.votenote.net.MainActivity
-import com.votenote.net.MainActivityOld
 import com.votenote.net.R
 import com.votenote.net.enums.SharedPreferencesTags
 import com.votenote.net.retrofit.common.Common
@@ -40,7 +39,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         view = findViewById(R.id.splash_screen_container)
 
-        sharedPreference = getSharedPreferences(MainActivityOld().APP_PREFERENCE, Context.MODE_PRIVATE)
+        sharedPreference = getSharedPreferences(MainActivity.APP_PREFERENCE, Context.MODE_PRIVATE)
         retrofitService = Common.retrofitService
 
         Handler(Looper.getMainLooper()).postDelayed({
