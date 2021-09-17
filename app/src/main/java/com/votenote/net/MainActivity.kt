@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -19,6 +17,7 @@ import com.votenote.net.ui.theme.VoteNoteTheme
 
 class MainActivity : ComponentActivity() {
 
+    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -39,6 +38,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalMaterialApi
 @Preview(name = "Main Screen", showBackground = true)
 @Composable
 fun MainPreview() {
@@ -47,14 +47,7 @@ fun MainPreview() {
     }
 }
 
-@Preview(name = "Home Screen", showBackground = true)
-@Composable
-fun HomePreview() {
-    VoteNoteTheme {
-        HomeScreen()
-    }
-}
-
+@ExperimentalMaterialApi
 @Composable
 fun MainScreen() {
     val tabs = listOf(BottomTabs.Search, BottomTabs.Home, BottomTabs.Chats, BottomTabs.Profile)
@@ -82,9 +75,7 @@ fun MainScreen() {
         when (tabs[selectedTabIndex]) {
             BottomTabs.Search -> {
                 Log.d(DEBUG_TAG, "Search")
-                Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-                    Text("Search", color = MaterialTheme.colors.secondary)
-                }
+                SearchScreen()
             }
             BottomTabs.Home -> {
                 Log.d(DEBUG_TAG, "Home")
