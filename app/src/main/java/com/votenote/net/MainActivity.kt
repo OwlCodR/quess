@@ -80,14 +80,10 @@ fun MainScreen() {
             composable(BottomTabs.Search.name) { SearchScreen() }
             composable(BottomTabs.Home.name) { HomeScreen() }
             composable(BottomTabs.Chats.name) {
-                Text("Chats", modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize())
+                Text("Chats", modifier = Modifier.fillMaxSize().wrapContentSize())
             }
             composable(BottomTabs.Profile.name) {
-                Text("Profile", modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize())
+                Text("Profile", modifier = Modifier.fillMaxSize().wrapContentSize())
             }
         }
     }
