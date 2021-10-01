@@ -24,7 +24,7 @@ fun HomePreview() {
 @Composable
 fun HomeTopAppBar() {
     TopAppBar (
-        contentPadding = PaddingValues(20.dp, 2.dp),
+        contentPadding = PaddingValues(15.dp, 2.dp),
         contentColor = MaterialTheme.colors.secondary
     ) {
         Row (verticalAlignment = Alignment.CenterVertically) {
@@ -32,7 +32,7 @@ fun HomeTopAppBar() {
                 text = "Home",
                 fontFamily = FontFamily(Font(R.font.proxima_nova_black)),
                 fontSize = 24.sp,
-                modifier = Modifier.wrapContentSize()
+                modifier = Modifier.wrapContentSize().padding(10.dp, 0.dp)
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

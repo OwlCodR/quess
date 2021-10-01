@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.votenote.net.ui.tabs.BottomTabs
 import com.votenote.net.ui.theme.VoteNoteTheme
 
@@ -44,12 +45,25 @@ fun MainPreview() {
     }
 }
 
+@Composable
+fun StatusBarColor() {
+    val systemUiController = rememberSystemUiController()
+
+    systemUiController.setStatusBarColor(
+        color = MaterialTheme.colors.primary,
+        darkIcons = true
+    )
+}
+
 @ExperimentalMaterialApi
 @Composable
 fun MainScreen() {
+    StatusBarColor()
+
     val navController = rememberNavController()
     val bottomTabs = listOf(BottomTabs.Search, BottomTabs.Home, BottomTabs.Chats, BottomTabs.Profile)
-    var selectedTabIndex: Int by remember { mutableStateOf(0) }
+    val startDestination = BottomTabs.Home
+    var selectedTabIndex: Int by remember { mutableStateOf(bottomTabs.indexOf(startDestination)) }
 
     Scaffold (
         contentColor = MaterialTheme.colors.secondary,
@@ -74,7 +88,7 @@ fun MainScreen() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = BottomTabs.Home.name,
+            startDestination = startDestination.name,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(BottomTabs.Search.name) { SearchScreen() }
