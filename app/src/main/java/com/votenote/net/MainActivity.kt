@@ -1,17 +1,19 @@
 package com.votenote.net
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.votenote.net.MainActivity.Companion.DEBUG_TAG
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.votenote.net.ui.tabs.BottomTabs
 import com.votenote.net.ui.theme.VoteNoteTheme
 
@@ -22,11 +24,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             VoteNoteTheme {
-                /*// A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
-                }*/
-
                 MainScreen()
             }
         }
@@ -50,20 +47,24 @@ fun MainPreview() {
 @ExperimentalMaterialApi
 @Composable
 fun MainScreen() {
-    val tabs = listOf(BottomTabs.Search, BottomTabs.Home, BottomTabs.Chats, BottomTabs.Profile)
+    val navController = rememberNavController()
+    val bottomTabs = listOf(BottomTabs.Search, BottomTabs.Home, BottomTabs.Chats, BottomTabs.Profile)
     var selectedTabIndex: Int by remember { mutableStateOf(0) }
 
     Scaffold (
         contentColor = MaterialTheme.colors.secondary,
         bottomBar = {
             BottomNavigation {
-                tabs.forEachIndexed { index, item ->
+                bottomTabs.forEachIndexed { index, item ->
                     BottomNavigationItem(
                         icon = { Icon(painterResource(item.tab.imageResourceID), contentDescription = null) },
                         label = { Text(item.tab.title) },
                         alwaysShowLabel = false,
                         selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
+                        onClick = {
+                            selectedTabIndex = index
+                            navController.navigate(bottomTabs[selectedTabIndex].name)
+                        },
                         selectedContentColor = MaterialTheme.colors.primaryVariant,
                         unselectedContentColor = MaterialTheme.colors.secondary
                     )
@@ -71,28 +72,24 @@ fun MainScreen() {
             }
         }
     ) { innerPadding ->
-
-        when (tabs[selectedTabIndex]) {
-            BottomTabs.Search -> {
-                Log.d(DEBUG_TAG, "Search")
-                SearchScreen()
-            }
-            BottomTabs.Home -> {
-                Log.d(DEBUG_TAG, "Home")
-                HomeScreen()
-            }
-            BottomTabs.Chats -> {
-                Log.d(DEBUG_TAG, "Chats")
+        NavHost(
+            navController = navController,
+            startDestination = BottomTabs.Home.name,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(BottomTabs.Search.name) { SearchScreen() }
+            composable(BottomTabs.Home.name) { HomeScreen() }
+            composable(BottomTabs.Chats.name) {
                 Text("Chats", modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize())
+                .fillMaxSize()
+                .wrapContentSize())
             }
-            BottomTabs.Profile -> {
-                Log.d(DEBUG_TAG, "Profile")
+            composable(BottomTabs.Profile.name) {
                 Text("Profile", modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize())
+                .fillMaxSize()
+                .wrapContentSize())
             }
         }
     }
 }
+
