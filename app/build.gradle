@@ -60,6 +60,8 @@ android {
 }
 
 dependencies {
+    implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

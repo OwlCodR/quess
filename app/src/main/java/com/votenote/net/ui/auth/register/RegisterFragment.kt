@@ -20,6 +20,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.gson.Gson
 import com.hbb20.CountryCodePicker
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -290,7 +291,7 @@ class RegisterFragment : Fragment() {
                         }
 
                         override fun onResponse(call: Call<Answer>, response: Response<Answer>) {
-                            onResponse(response)
+                            onResponse(response, newUser)
                         }
                     }
                 )
@@ -325,23 +326,24 @@ class RegisterFragment : Fragment() {
         hideProgressBar()
     }
 
-    private fun onResponse(response: Response<Answer>) {
+    private fun onResponse(response: Response<Answer>, user: User) {
         //log(context, "response.isSuccessful = " + response.isSuccessful)
-
         if (response.isSuccessful) {
             val body = response.body()
             val code: String? = body?.errorCode
 
             if (code == "0000") {
-                //log(context, "User has been registered")
+                val userJson = Gson().toJson(user)
 
                 sharedPreference
                     .edit()
                     .putBoolean("loggedIn", true)
+                    .putString("user", userJson)
                     .apply()
                 navController.navigate(R.id.action_nav_register_to_nav_main)
             }
         } else {
+
             /*
                 There are 2 ways:
                 1. We have some unpredictable server exception, i.e. html code of error-page

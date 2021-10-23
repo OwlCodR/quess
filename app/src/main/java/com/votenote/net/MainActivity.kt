@@ -1,5 +1,6 @@
 package com.votenote.net
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
@@ -65,13 +67,16 @@ fun MainScreen() {
     val startDestination = BottomTabs.Home
     var selectedTabIndex: Int by remember { mutableStateOf(bottomTabs.indexOf(startDestination)) }
 
+    val sharedPreferences = LocalContext.current
+        .getSharedPreferences(MainActivity.APP_PREFERENCE, Context.MODE_PRIVATE)
+
     Scaffold (
         contentColor = MaterialTheme.colors.secondary,
         bottomBar = {
             BottomNavigation {
                 bottomTabs.forEachIndexed { index, item ->
                     BottomNavigationItem(
-                        icon = { Icon(painterResource(item.tab.imageResourceID), contentDescription = null) },
+                        icon = { Icon(painterResource(item.tab.imageResourceID!!), contentDescription = null) },
                         label = { Text(item.tab.title) },
                         alwaysShowLabel = false,
                         selected = selectedTabIndex == index,
@@ -97,7 +102,11 @@ fun MainScreen() {
                 Text("Chats", modifier = Modifier.fillMaxSize().wrapContentSize())
             }
             composable(BottomTabs.Profile.name) {
-                Text("Profile", modifier = Modifier.fillMaxSize().wrapContentSize())
+                // @TODO
+                // May be it's better to throw user to auth screen
+                // if getString("user") == null
+
+                ProfileScreen(sharedPreferences.getString("user", null))
             }
         }
     }

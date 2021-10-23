@@ -3,7 +3,7 @@ package com.votenote.net
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -13,9 +13,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.votenote.net.ui.tabs.GlobalSearchTabs
 import com.votenote.net.ui.theme.Black50
 import com.votenote.net.ui.theme.VoteNoteTheme
-
 
 @ExperimentalMaterialApi
 @Preview(name = "Search Screen", showBackground = true)
@@ -113,10 +113,41 @@ fun SearchTopAppBar() {
     }
 }
 
+@Composable
+fun GlobalSearchContent() {
+
+}
+
+@Composable
+fun GlobalSearchTabRow() {
+    var state by remember { mutableStateOf(0) }
+    val globalSearchTabs = listOf(GlobalSearchTabs.TOP, GlobalSearchTabs.NEW, GlobalSearchTabs.HOT)
+
+    Column {
+        TabRow(
+            contentColor = MaterialTheme.colors.primaryVariant,
+            selectedTabIndex = state
+        ) {
+            globalSearchTabs.forEachIndexed { index, title ->
+                Tab(
+                    // TODO("Disable ripple effect")
+                    selectedContentColor = MaterialTheme.colors.primaryVariant,
+                    unselectedContentColor = MaterialTheme.colors.secondary,
+                    text = { Text(globalSearchTabs[index].name) },
+                    selected = state == index,
+                    onClick = { state = index },
+                )
+            }
+        }
+        GlobalSearchContent()
+    }
+}
+
 @ExperimentalMaterialApi
 @Composable
 fun SearchScreen() {
     Column(modifier = Modifier.fillMaxSize()) {
         SearchTopAppBar()
+        GlobalSearchTabRow()
     }
 }
